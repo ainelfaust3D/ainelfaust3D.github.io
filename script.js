@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Анимация фона с реакцией на движение мыши
     const backgroundAnimation = document.querySelector('.background-animation');
     const asciiAnimals = ['🐱', '🐰', '🌸', '✨', '💖', '🌈', '🍓', '🎀', '🌟', '🐾']; // Добавьте больше по желанию
+    const animatedShapes = []; // Для отслеживания активных фигур
 
     function createAnimatedShape(x, y) {
         const shape = document.createElement('span'); // Используем span для текста
@@ -77,22 +78,49 @@ document.addEventListener('DOMContentLoaded', () => {
         shape.textContent = randomAnimal;
         const size = Math.random() * 30 + 20; // Размер шрифта от 20px до 50px
         shape.style.fontSize = `${size}px`;
-        shape.style.left = `${x - size / 2}px`;
-        shape.style.top = `${y - size / 2}px`;
+
+        // Случайное начальное положение по всей области анимации
+        const initialX = x !== undefined ? x : Math.random() * backgroundAnimation.offsetWidth;
+        const initialY = y !== undefined ? y : Math.random() * backgroundAnimation.offsetHeight;
+
+        shape.style.left = `${initialX - size / 2}px`;
+        shape.style.top = `${initialY - size / 2}px`;
         shape.style.opacity = Math.random() * 0.7 + 0.3; // Прозрачность от 0.3 до 1
         shape.style.color = `hsl(${Math.random() * 360}, 70%, 70%)`; // Случайный пастельный цвет
         backgroundAnimation.appendChild(shape);
+        animatedShapes.push(shape);
 
         // Удаляем фигуру через некоторое время
         setTimeout(() => {
             shape.remove();
+            animatedShapes.splice(animatedShapes.indexOf(shape), 1); // Удаляем из массива
         }, 5000); // Фигура исчезает через 5 секунд
     }
 
+    // Создаем несколько начальных фигур для эффекта плавания
+    for (let i = 0; i < 10; i++) {
+        createAnimatedShape(); // Вызываем без координат, чтобы они появились случайно
+    }
+
+    // Параллакс эффект
     document.addEventListener('mousemove', (e) => {
-        // Создаем новую фигуру только с некоторой вероятностью, чтобы не перегружать DOM
-        if (Math.random() < 0.1) { // 10% шанс на создание фигуры при каждом движении мыши
-            createAnimatedShape(e.clientX, e.clientY);
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+
+        const centerX = backgroundAnimation.offsetWidth / 2;
+        const centerY = backgroundAnimation.offsetHeight / 2;
+
+        const offsetX = (mouseX - centerX) * 0.05; // Коэффициент параллакса
+        const offsetY = (mouseY - centerY) * 0.05; // Коэффициент параллакса
+
+        animatedShapes.forEach(shape => {
+            const depth = parseFloat(shape.style.fontSize) / 50; // Глубина зависит от размера
+            shape.style.transform = `translate(${offsetX * depth}px, ${offsetY * depth}px)`;
+        });
+
+        // Создаем новые фигуры при движении мыши с меньшей вероятностью
+        if (Math.random() < 0.02) { // Уменьшаем вероятность появления новых фигур
+            createAnimatedShape(mouseX, mouseY);
         }
     });
 

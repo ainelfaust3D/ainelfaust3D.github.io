@@ -142,33 +142,10 @@ header nav ul li a:hover {
 
 .animated-shape {
     position: absolute;
-    /* background-color: rgba(255, 255, 255, 0.4); */ /* Удалено, так как теперь это текст */
-    /* border-radius: 50%; */ /* Удалено, так как теперь это текст */
     opacity: 0;
-    animation: floatAndFade 20s infinite ease-in-out forwards;
     pointer-events: none; /* Чтобы не мешать взаимодействию с другими элементами */
     transition: transform 0.1s ease-out; /* Плавное движение за курсором */
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Добавляем тень для лучшей видимости */
-}
-
-@keyframes floatAndFade {
-    0% {
-        transform: translateY(0) scale(0) rotate(0deg);
-        opacity: 0;
-    }
-    20% {
-        transform: translateY(-20px) scale(1) rotate(30deg);
-        opacity: 0.6;
-    }
-    80% {
-        transform: translateY(20px) scale(1) rotate(330deg);
-        opacity: 0.6;
-    }
-    100% {
-        transform: translateY(0) scale(0) rotate(360deg);
-        opacity: 0;
-    }
-}
 
 /* Main Content */
 main {
