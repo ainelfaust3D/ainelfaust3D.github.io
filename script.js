@@ -66,6 +66,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Анимация фона с реакцией на движение мыши
+    const backgroundAnimation = document.querySelector('.background-animation');
+    const asciiAnimals = ['🐱', '🐰', '🌸', '✨', '💖', '🌈', '🍓', '🎀', '🌟', '🐾']; // Добавьте больше по желанию
+
+    function createAnimatedShape(x, y) {
+        const shape = document.createElement('span'); // Используем span для текста
+        shape.classList.add('animated-shape');
+        const randomAnimal = asciiAnimals[Math.floor(Math.random() * asciiAnimals.length)];
+        shape.textContent = randomAnimal;
+        const size = Math.random() * 30 + 20; // Размер шрифта от 20px до 50px
+        shape.style.fontSize = `${size}px`;
+        shape.style.left = `${x - size / 2}px`;
+        shape.style.top = `${y - size / 2}px`;
+        shape.style.opacity = Math.random() * 0.7 + 0.3; // Прозрачность от 0.3 до 1
+        shape.style.color = `hsl(${Math.random() * 360}, 70%, 70%)`; // Случайный пастельный цвет
+        backgroundAnimation.appendChild(shape);
+
+        // Удаляем фигуру через некоторое время
+        setTimeout(() => {
+            shape.remove();
+        }, 5000); // Фигура исчезает через 5 секунд
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        // Создаем новую фигуру только с некоторой вероятностью, чтобы не перегружать DOM
+        if (Math.random() < 0.1) { // 10% шанс на создание фигуры при каждом движении мыши
+            createAnimatedShape(e.clientX, e.clientY);
+        }
+    });
+
     // Рендерим портфолио по умолчанию (первая вкладка)
     renderPortfolio('3d_print');
 });
