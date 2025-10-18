@@ -28,21 +28,13 @@
 
         <section id="portfolio">
             <h2>Портфолио</h2>
-            <div class="gallery">
-                <!-- Сюда будут добавлены ваши 3D модели и скриншоты -->
-                <!-- Для 3D моделей можно использовать библиотеки типа Three.js или Model Viewer -->
-                <!-- Пример для скриншота: -->
-                <!-- <div class="portfolio-item">
-                    <img src="images/model1_screenshot.jpg" alt="Название Модели 1">
-                    <h3>Название Модели 1</h3>
-                    <p>Краткое описание модели.</p>
-                </div> -->
-                <!-- Пример для 3D модели (потребуется JS и библиотека): -->
-                <!-- <div class="portfolio-item">
-                    <model-viewer src="models/model2.glb" alt="Название Модели 2" auto-rotate camera-controls></model-viewer>
-                    <h3>Название Модели 2</h3>
-                    <p>Интерактивная 3D модель.</p>
-                </div> -->
+            <div class="tabs">
+                <button class="tab-button active" data-category="3d_print">3D Печать</button>
+                <button class="tab-button" data-category="games">Игры</button>
+                <button class="tab-button" data-category="formwork">Опалубки</button>
+            </div>
+            <div class="gallery" id="portfolio-gallery">
+                <!-- Контент будет загружаться сюда динамически -->
             </div>
         </section>
 
@@ -58,6 +50,7 @@
         <p>&copy; 2023 Ваше Имя. Все права защищены.</p>
     </footer>
 
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
