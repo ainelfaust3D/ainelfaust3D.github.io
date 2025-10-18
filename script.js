@@ -2,24 +2,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const portfolioGallery = document.getElementById('portfolio-gallery');
     const tabButtons = document.querySelectorAll('.tab-button');
 
-    // Пример структуры данных для портфолио.
-    // Вам нужно будет заполнить это своими данными.
-    // 'category' соответствует 'data-category' атрибуту кнопок вкладок.
-    // 'type': 'model' для 3D-моделей (glb/gltf), 'image' для скриншотов.
-    // 'src': путь к файлу.
-    // 'alt': альтернативный текст или название модели.
+    // Структура для хранения данных портфолио (только изображения)
+    // Вам нужно будет вручную заполнить этот объект путями к вашим изображениям.
+    // Пример: 'images/3d_print/image1.jpg'
     const portfolioItems = {
         '3d_print': [
-            // { type: 'model', src: '3d/3d_print/model1.glb', alt: 'Модель для 3D печати 1', title: 'Название Модели 1', description: 'Описание модели для 3D печати.' },
-            // { type: 'image', src: 'images/3d_print/screenshot1.jpg', alt: 'Скриншот 3D печати 1', title: 'Название Скриншота 1', description: 'Описание скриншота 3D печати.' }
+            { src: 'images/3d_print/1.png', alt: '3D печать 1', title: '3D печать 1', description: 'Описание 3D печати 1.' },
+            { src: 'images/3d_print/2.png', alt: '3D печать 2', title: '3D печать 2', description: 'Описание 3D печати 2.' },
+            { src: 'images/3d_print/3.png', alt: '3D печать 3', title: '3D печать 3', description: 'Описание 3D печати 3.' }
         ],
         'games': [
-            // { type: 'model', src: '3d/games/game_model1.glb', alt: 'Игровая модель 1', title: 'Название Игровой Модели 1', description: 'Описание игровой модели.' },
-            // { type: 'image', src: 'images/games/game_screenshot1.jpg', alt: 'Скриншот игры 1', title: 'Название Скриншота Игры 1', description: 'Описание скриншота игры.' }
+            { src: 'images/games/1.png', alt: 'Игра 1', title: 'Игра 1', description: 'Описание игры 1.' },
+            { src: 'images/games/2.png', alt: 'Игра 2', title: 'Игра 2', description: 'Описание игры 2.' },
+            { src: 'images/games/3.png', alt: 'Игра 3', title: 'Игра 3', description: 'Описание игры 3.' }
         ],
-        'formwork': [
-            // { type: 'model', src: '3d/formwork/formwork_model1.glb', alt: 'Модель опалубки 1', title: 'Название Модели Опалубки 1', description: 'Описание модели опалубки.' },
-            // { type: 'image', src: 'images/formwork/formwork_screenshot1.jpg', alt: 'Скриншот опалубки 1', title: 'Название Скриншота Опалубки 1', description: 'Описание скриншота опалубки.' }
+        'technical_models': [
+            { src: 'images/technical_models/1.png', alt: 'Техническая модель 1', title: 'Техническая модель 1', description: 'Описание технической модели 1.' },
+            { src: 'images/technical_models/2.png', alt: 'Техническая модель 2', title: 'Техническая модель 2', description: 'Описание технической модели 2.' },
+            { src: 'images/technical_models/3.png', alt: 'Техническая модель 3', title: 'Техническая модель 3', description: 'Описание технической модели 3.' }
         ]
     };
 
@@ -29,39 +29,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (items && items.length > 0) {
             items.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.classList.add('portfolio-item');
+                const portfolioItem = document.createElement('div');
+                portfolioItem.classList.add('portfolio-item');
 
-                if (item.type === 'model') {
-                    const modelViewer = document.createElement('model-viewer');
-                    modelViewer.setAttribute('src', item.src);
-                    modelViewer.setAttribute('alt', item.alt);
-                    modelViewer.setAttribute('auto-rotate', '');
-                    modelViewer.setAttribute('camera-controls', '');
-                    modelViewer.setAttribute('ar', ''); // Добавляем AR для мобильных устройств
-                    itemDiv.appendChild(modelViewer);
-                } else if (item.type === 'image') {
-                    const img = document.createElement('img');
-                    img.setAttribute('src', item.src);
-                    img.setAttribute('alt', item.alt);
-                    itemDiv.appendChild(img);
-                }
+                const img = document.createElement('img');
+                img.src = item.src;
+                img.alt = item.alt;
+
+                const info = document.createElement('div');
+                info.classList.add('portfolio-item-info');
 
                 const title = document.createElement('h3');
                 title.textContent = item.title;
-                itemDiv.appendChild(title);
 
                 const description = document.createElement('p');
                 description.textContent = item.description;
-                itemDiv.appendChild(description);
 
-                portfolioGallery.appendChild(itemDiv);
+                info.appendChild(title);
+                info.appendChild(description);
+                portfolioItem.appendChild(img);
+                portfolioItem.appendChild(info);
+                portfolioGallery.appendChild(portfolioItem);
             });
         } else {
-            portfolioGallery.innerHTML = '<p>Нет элементов в этой категории.</p>';
+            portfolioGallery.innerHTML = '<p>В этой категории пока нет работ.</p>';
         }
     }
 
+    // Обработчики событий для кнопок вкладок
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
             tabButtons.forEach(btn => btn.classList.remove('active'));
@@ -71,6 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Рендерим первую категорию при загрузке страницы
+    // Рендерим портфолио по умолчанию (первая вкладка)
     renderPortfolio('3d_print');
 });

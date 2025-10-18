@@ -3,54 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Портфолио 3D Моделлера</title>
+    <title>Анжелика Мерзликина - 3D Моделлер</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>Ваше Имя</h1>
-        <p>3D Моделлер | Художник</p>
+        <nav>
+            <div class="logo">Анжелика Мерзликина</div>
+            <ul>
+                <li><a href="#about">Обо мне</a></li>
+                <li><a href="#portfolio">Портфолио</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <nav>
-        <ul>
-            <li><a href="#about">Обо мне</a></li>
-            <li><a href="#portfolio">Портфолио</a></li>
-            <li><a href="#contact">Контакты</a></li>
-        </ul>
-    </nav>
-
     <main>
-        <section id="about">
-            <h2>Обо мне</h2>
-            <p>Здесь вы можете рассказать о себе, своем опыте и навыках в 3D моделировании.</p>
+        <section id="hero">
+            <div class="hero-content">
+                <h1>Анжелика Мерзликина</h1>
+                <p>3D Моделлер</p>
+                <a href="#portfolio" class="btn">Посмотреть работы</a>
+            </div>
+            <div class="background-animation"></div> <!-- Placeholder for background animations -->
         </section>
 
-        <section id="portfolio">
+        <section id="about" class="card">
+            <h2>Обо мне</h2>
+            <p>Привет! Я Анжелика, 3D моделлер с опытом создания детализированных моделей для различных проектов. Моя страсть — воплощать идеи в жизнь через трехмерную графику, будь то персонажи, объекты или архитектурные элементы. Я стремлюсь к совершенству в каждой детали и постоянно изучаю новые техники и инструменты.</p>
+            <p>В моем портфолио вы найдете примеры работ по 3D печати, моделированию для игр и созданию технических моделей.</p>
+        </section>
+
+        <section id="portfolio" class="card">
             <h2>Портфолио</h2>
             <div class="tabs">
-                <button class="tab-button active" data-category="3d_print">3D Печать</button>
+                <button class="tab-button active" data-category="3d_print">3д печать</button>
                 <button class="tab-button" data-category="games">Игры</button>
-                <button class="tab-button" data-category="formwork">Опалубки</button>
+                <button class="tab-button" data-category="technical_models">Технические модели</button>
             </div>
-            <div class="gallery" id="portfolio-gallery">
-                <!-- Контент будет загружаться сюда динамически -->
+            <div id="portfolio-gallery" class="gallery">
+                <!-- Галерея будет заполнена динамически -->
             </div>
         </section>
 
-        <section id="contact">
+        <section id="contact" class="card">
             <h2>Контакты</h2>
-            <p>Email: ваш_email@example.com</p>
-            <p>LinkedIn: <a href="#">Ваш профиль</a></p>
-            <p>ArtStation: <a href="#">Ваш профиль</a></p>
+            <p>Готова к новым проектам и сотрудничеству! Свяжитесь со мной:</p>
+            <p>Email: <a href="mailto:your.email@example.com">your.email@example.com</a></p>
+            <p>LinkedIn: <a href="https://www.linkedin.com/in/yourprofile" target="_blank">linkedin.com/in/yourprofile</a></p>
+            <p>ArtStation: <a href="https://www.artstation.com/yourprofile" target="_blank">artstation.com/yourprofile</a></p>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2023 Ваше Имя. Все права защищены.</p>
+        <p>&copy; 2023 Анжелика Мерзликина. Все права защищены.</p>
     </footer>
 
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
