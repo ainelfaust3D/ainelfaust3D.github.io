@@ -194,7 +194,7 @@ header nav ul li a:hover {
 
 .animated-shape {
     position: absolute;
-    opacity: 0.8;
+
     pointer-events: none;
     transition: transform 0.2s ease-out, opacity 1s ease;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);

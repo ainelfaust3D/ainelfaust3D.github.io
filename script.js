@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Создаем эмодзи один раз
     function createEmoji() {
         const shape = document.createElement('span');
-        shape.classList.add('animated-shape');
+        shape.classList.add('animated-shape', 'fade-in');
         
         const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
         shape.textContent = randomEmoji;
@@ -110,6 +110,20 @@ document.addEventListener('DOMContentLoaded', () => {
         
         backgroundAnimation.appendChild(shape);
         emojiShapes.push(shape);
+
+        // Логика для плавного исчезновения и пересоздания
+        const lifeTime = Math.random() * 10000 + 5000; // Эмодзи живет от 5 до 15 секунд
+        setTimeout(() => {
+            shape.classList.add('fade-out');
+            shape.addEventListener('animationend', () => {
+                shape.remove();
+                const index = emojiShapes.indexOf(shape);
+                if (index > -1) {
+                    emojiShapes.splice(index, 1);
+                }
+                createEmoji(); // Создаем новый эмодзи взамен
+            }, { once: true });
+        }, lifeTime);
 
         return shape;
     }
