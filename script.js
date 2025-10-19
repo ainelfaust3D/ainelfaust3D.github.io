@@ -91,10 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         animatedShapes.push(shape);
 
         // Удаляем фигуру через некоторое время
-        setTimeout(() => {
-            shape.remove();
-            animatedShapes.splice(animatedShapes.indexOf(shape), 1); // Удаляем из массива
-        }, 5000); // Фигура исчезает через 5 секунд
+        
     }
 
     // Создаем несколько начальных фигур для эффекта плавания
@@ -110,8 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const centerX = backgroundAnimation.offsetWidth / 2;
         const centerY = backgroundAnimation.offsetHeight / 2;
 
-        const offsetX = (mouseX - centerX) * 0.05; // Коэффициент параллакса
-        const offsetY = (mouseY - centerY) * 0.05; // Коэффициент параллакса
+        const offsetX = (mouseX - centerX) * 0.02; // Коэффициент параллакса
+        const offsetY = (mouseY - centerY) * 0.02; // Коэффициент параллакса
 
         animatedShapes.forEach(shape => {
             const depth = parseFloat(shape.style.fontSize) / 50; // Глубина зависит от размера

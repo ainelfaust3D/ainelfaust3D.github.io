@@ -146,6 +146,19 @@ header nav ul li a:hover {
     pointer-events: none; /* Чтобы не мешать взаимодействию с другими элементами */
     transition: transform 0.1s ease-out; /* Плавное движение за курсором */
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Добавляем тень для лучшей видимости */
+    animation: floatEffect 10s infinite ease-in-out alternate;
+}
+
+@keyframes floatEffect {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
 
 /* Main Content */
 main {
