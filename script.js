@@ -66,29 +66,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Улучшенная анимация фона с реакцией на движение мыши
+    // Статичная система эмодзи - создаем один раз и больше не меняем
     const backgroundAnimation = document.querySelector('.background-animation');
     const emojis = ['🐱', '🐰', '🌸', '✨', '💖', '🌈', '🍓', '🎀', '🌟', '🐾', '🦋', '🌺', '💫', '🦄', '🌙', '⭐', '🎈', '🎨', '🎭', '🎪'];
-    const animatedShapes = [];
+    
+    // Массив для хранения эмодзи
+    const emojiShapes = [];
     let mouseX = 0, mouseY = 0;
     let animationId;
 
-    // Функция для равномерного распределения эмодзи
+    // Функция для равномерного распределения
     function getRandomPosition() {
-        const margin = 50; // Отступ от краев
+        const margin = 50;
         const x = Math.random() * (backgroundAnimation.offsetWidth - margin * 2) + margin;
         const y = Math.random() * (backgroundAnimation.offsetHeight - margin * 2) + margin;
         return { x, y };
     }
 
-    function createAnimatedShape(x, y, isMouseTriggered = false) {
+    // Создаем эмодзи один раз
+    function createEmoji() {
         const shape = document.createElement('span');
         shape.classList.add('animated-shape');
         
         const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
         shape.textContent = randomEmoji;
         
-        const size = Math.random() * 40 + 15; // Размер от 15px до 55px
+        const size = Math.random() * 40 + 15;
         shape.style.fontSize = `${size}px`;
 
         // Добавляем случайную анимацию
@@ -98,60 +101,20 @@ document.addEventListener('DOMContentLoaded', () => {
             shape.classList.add(randomAnimation);
         }
 
-        // Позиционирование - равномерное распределение
-        let initialX, initialY;
-        if (x !== undefined && y !== undefined && isMouseTriggered) {
-            // Если это триггер от мыши, используем координаты мыши
-            initialX = x;
-            initialY = y;
-        } else {
-            // Иначе используем равномерное распределение
-            const pos = getRandomPosition();
-            initialX = pos.x;
-            initialY = pos.y;
-        }
-
-        shape.style.left = `${initialX - size / 2}px`;
-        shape.style.top = `${initialY - size / 2}px`;
+        // Позиционирование
+        const pos = getRandomPosition();
+        shape.style.left = `${pos.x - size / 2}px`;
+        shape.style.top = `${pos.y - size / 2}px`;
         shape.style.opacity = Math.random() * 0.8 + 0.2;
-        shape.style.color = `hsl(${Math.random() * 60 + 300}, 80%, 70%)`; // Пастельные цвета
+        shape.style.color = `hsl(${Math.random() * 60 + 300}, 80%, 70%)`;
         
         backgroundAnimation.appendChild(shape);
-        animatedShapes.push(shape);
+        emojiShapes.push(shape);
 
-        // Плавное исчезание через случайное время (от 10 до 20 секунд)
-        const fadeTime = Math.random() * 10000 + 10000; // 10-20 секунд
-        setTimeout(() => {
-            shape.classList.add('fade-out');
-            // Увеличиваем время для плавного исчезания
-            setTimeout(() => {
-                if (shape.parentNode) {
-                    shape.parentNode.removeChild(shape);
-                }
-                const index = animatedShapes.indexOf(shape);
-                if (index > -1) {
-                    animatedShapes.splice(index, 1);
-                }
-            }, 1500); // Даем больше времени на исчезание
-        }, fadeTime);
-
-        // Если это триггер от мыши, добавляем дополнительный эффект
-        if (isMouseTriggered) {
-            shape.style.transform = 'scale(1.5)';
-            setTimeout(() => {
-                shape.style.transform = '';
-            }, 200);
-        }
+        return shape;
     }
 
-    // Создаем начальные фигуры с задержкой для равномерного распределения
-    for (let i = 0; i < 15; i++) {
-        setTimeout(() => {
-            createAnimatedShape();
-        }, i * 300); // Создаем по одному эмодзи каждые 300мс
-    }
-
-    // Улучшенный параллакс эффект
+    // Параллакс эффект
     function updateParallax() {
         const centerX = backgroundAnimation.offsetWidth / 2;
         const centerY = backgroundAnimation.offsetHeight / 2;
@@ -159,9 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const offsetX = (mouseX - centerX) * 0.03;
         const offsetY = (mouseY - centerY) * 0.03;
 
-        animatedShapes.forEach((shape, index) => {
-            const depth = (parseFloat(shape.style.fontSize) / 55) * 2; // Более выраженный параллакс
-            const delay = index * 0.1; // Добавляем небольшую задержку для волнового эффекта
+        emojiShapes.forEach((shape, index) => {
+            const depth = (parseFloat(shape.style.fontSize) / 55) * 2;
+            const delay = index * 0.1;
             
             shape.style.transform = `translate(${offsetX * depth}px, ${offsetY * depth}px) translateZ(${delay}px)`;
         });
@@ -169,74 +132,19 @@ document.addEventListener('DOMContentLoaded', () => {
         animationId = requestAnimationFrame(updateParallax);
     }
 
-    let lastMouseTime = 0;
-    let mouseMoveCount = 0;
+    // Создаем 20 эмодзи один раз при загрузке
+    for (let i = 0; i < 20; i++) {
+        createEmoji();
+    }
 
-    // Обработчик движения мыши
+    // Обработчик движения мыши - только для параллакса
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-
-        const currentTime = Date.now();
-        mouseMoveCount++;
-
-        // Создаем новые фигуры при движении мыши с контролируемой частотой
-        // Не чаще чем раз в 2 секунды и только после 10 движений мыши
-        if (mouseMoveCount > 10 && currentTime - lastMouseTime > 2000 && Math.random() < 0.3) {
-            createAnimatedShape(mouseX, mouseY, true);
-            lastMouseTime = currentTime;
-            mouseMoveCount = 0; // Сбрасываем счетчик
-        }
-
-        // Ограничиваем количество фигур
-        if (animatedShapes.length > 20) {
-            const oldestShape = animatedShapes.shift();
-            if (oldestShape && oldestShape.parentNode) {
-                oldestShape.classList.add('fade-out');
-                setTimeout(() => {
-                    if (oldestShape.parentNode) {
-                        oldestShape.parentNode.removeChild(oldestShape);
-                    }
-                }, 1500);
-            }
-        }
     });
 
     // Запускаем параллакс анимацию
     updateParallax();
-
-    // Система автоматического пополнения эмодзи
-    function maintainEmojiCount() {
-        const targetCount = 15;
-        const currentCount = animatedShapes.length;
-        
-        if (currentCount < targetCount) {
-            const needed = targetCount - currentCount;
-            for (let i = 0; i < needed; i++) {
-                setTimeout(() => {
-                    createAnimatedShape();
-                }, i * 500); // Создаем с интервалом 500мс
-            }
-        }
-    }
-
-    // Проверяем количество эмодзи каждые 5 секунд
-    setInterval(maintainEmojiCount, 5000);
-
-    // Обработчик изменения размера окна
-    window.addEventListener('resize', () => {
-        // Пересоздаем фигуры при изменении размера
-        animatedShapes.forEach(shape => {
-            if (shape.parentNode) {
-                shape.parentNode.removeChild(shape);
-            }
-        });
-        animatedShapes.length = 0;
-        
-        for (let i = 0; i < 15; i++) {
-            createAnimatedShape();
-        }
-    });
 
     // Рендерим портфолио по умолчанию (первая вкладка)
     renderPortfolio('3d_print');

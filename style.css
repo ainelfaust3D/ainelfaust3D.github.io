@@ -196,7 +196,7 @@ header nav ul li a:hover {
     position: absolute;
     opacity: 0.8;
     pointer-events: none;
-    transition: transform 0.1s ease-out, opacity 0.5s ease;
+    transition: transform 0.2s ease-out, opacity 1s ease;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     animation: floatEffect 8s infinite ease-in-out alternate, fadeInOut 12s infinite ease-in-out;
     will-change: transform;
@@ -204,8 +204,29 @@ header nav ul li a:hover {
 
 .animated-shape.fade-out {
     opacity: 0;
-    transform: scale(0.3) translateY(-20px);
-    transition: all 1.5s ease-in-out;
+    transform: scale(0.2) translateY(-30px) rotate(180deg);
+    transition: all 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.animated-shape.fade-in {
+    opacity: 0;
+    transform: scale(0.5) translateY(20px);
+    animation: fadeInScale 2s ease-out forwards;
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(20px);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1) translateY(-5px);
+    }
+    100% {
+        opacity: 0.8;
+        transform: scale(1) translateY(0);
+    }
 }
 
 @keyframes floatEffect {
