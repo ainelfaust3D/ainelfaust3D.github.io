@@ -60,8 +60,9 @@ header nav {
 }
 
 .logo {
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.8em;
-    font-weight: bold;
+    font-weight: 700;
     color: #fff;
 }
 
