@@ -199,7 +199,7 @@ header nav ul li a:hover {
     pointer-events: none;
     /* transition: transform 0.2s ease-out, opacity 1s ease; */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    animation: floatEffect 8s infinite ease-in-out alternate, fadeInOut 12s infinite ease-in-out;
+    animation: fadeInOut 12s infinite ease-in-out;
     will-change: transform;
 }
 
