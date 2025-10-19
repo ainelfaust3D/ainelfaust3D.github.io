@@ -23,18 +23,28 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     };
 
+    let currentCategory = '3d_print'; // Добавляем переменную для отслеживания текущей категории
+    let currentImageIndex = 0; // Добавляем переменную для отслеживания текущего индекса изображения
+
     function renderPortfolio(category) {
         portfolioGallery.innerHTML = ''; // Очищаем галерею
         const items = portfolioItems[category];
+        currentCategory = category; // Обновляем текущую категорию
 
         if (items && items.length > 0) {
-            items.forEach(item => {
+            items.forEach((item, index) => {
                 const portfolioItem = document.createElement('div');
                 portfolioItem.classList.add('portfolio-item');
 
                 const img = document.createElement('img');
                 img.src = item.src;
                 img.alt = item.alt;
+                img.dataset.full = item.src;
+                img.dataset.index = index; // Добавляем индекс изображения
+
+                img.addEventListener('click', () => {
+                    openLightbox(item.src, category, index);
+                });
 
                 const info = document.createElement('div');
                 info.classList.add('portfolio-item-info');
@@ -66,100 +76,136 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Статичная система эмодзи - создаем один раз и больше не меняем
+
+    // Новая система эмодзи
     const backgroundAnimation = document.querySelector('.background-animation');
-    const emojis = ['🐱', '🐰', '🌸', '✨', '💖', '🌈', '🍓', '🎀', '🌟', '🐾', '🦋', '🌺', '💫', '🦄', '🌙', '⭐', '🎈', '🎨', '🎭', '🎪'];
-    
-    // Массив для хранения эмодзи
-    const emojiShapes = [];
-    let mouseX = 0, mouseY = 0;
-    let animationId;
+    const emojis = [
+        '😀', '😂', '😍', '🤩', '🥳', '😎', '😇', '🥰', '😋', '😜',
+        '👍', '👏', '🙌', '💖', '✨', '🔥', '🌈', '☀️', '🌸', '🌼',
+        '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯',
+        '🍎', '🍓', '🍇', '🍉', '🍍', '🍑', '🍒', '🥝', '🍔', '🍕',
+        '🍦', '🍩', '🍪', '🎂', '🍬', '🍭', '🍫', '☕', '🍵', '🥂',
+        '🎈', '🎁', '🎉', '🎊', '🎀', '👑', '💎', '💫', '🌟', '✨'
+    ];
 
-    // Функция для равномерного распределения
-    function getRandomPosition() {
-        const margin = 50;
-        const x = Math.random() * (backgroundAnimation.offsetWidth - margin * 2) + margin;
-        const y = Math.random() * (backgroundAnimation.offsetHeight - margin * 2) + margin;
-        return { x, y };
-    }
+    function createFloatingEmoji() {
+        const emoji = document.createElement('span');
+        emoji.classList.add('floating-emoji');
+        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
 
-    // Создаем эмодзи один раз
-    function createEmoji() {
-        const shape = document.createElement('span');
-        shape.classList.add('animated-shape', 'fade-in');
-        
-        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-        shape.textContent = randomEmoji;
-        
-        const size = Math.random() * 40 + 15;
-        shape.style.fontSize = `${size}px`;
+        const size = Math.random() * 40 + 20; // Размер от 20px до 60px
+        emoji.style.fontSize = `${size}px`;
 
-        // Добавляем случайную анимацию
-        const animations = ['', 'bounce', 'spin'];
-        const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
-        if (randomAnimation) {
-            shape.classList.add(randomAnimation);
-        }
+        const startX = Math.random() * window.innerWidth;
+        const startY = window.innerHeight + Math.random() * 100; // Начинаем ниже экрана
+        emoji.style.left = `${startX}px`;
+        emoji.style.top = `${startY}px`;
 
-        // Позиционирование
-        const pos = getRandomPosition();
-        shape.style.left = `${pos.x - size / 2}px`;
-        shape.style.top = `${pos.y - size / 2}px`;
-        shape.style.opacity = Math.random() * 0.8 + 0.2;
-        shape.style.color = `hsl(${Math.random() * 60 + 300}, 80%, 70%)`;
-        
-        backgroundAnimation.appendChild(shape);
-        emojiShapes.push(shape);
+        const animationDuration = Math.random() * 10 + 5; // Длительность от 5 до 15 секунд
+        emoji.style.animationDuration = `${animationDuration}s`;
+        emoji.style.animationDelay = `${Math.random() * 5}s`; // Задержка до 5 секунд
 
-        // Логика для плавного исчезновения и пересоздания
-        const lifeTime = Math.random() * 10000 + 5000; // Эмодзи живет от 5 до 15 секунд
-        setTimeout(() => {
-            shape.classList.add('fade-out');
-            shape.addEventListener('animationend', () => {
-                shape.remove();
-                const index = emojiShapes.indexOf(shape);
-                if (index > -1) {
-                    emojiShapes.splice(index, 1);
-                }
-                createEmoji(); // Создаем новый эмодзи взамен
+        backgroundAnimation.appendChild(emoji);
+
+        emoji.addEventListener('click', (event) => {
+            const clickedEmoji = event.target;
+            const rect = clickedEmoji.getBoundingClientRect();
+
+            // Останавливаем текущую анимацию floatAndFade и сбрасываем трансформации
+            clickedEmoji.style.animation = 'none';
+            clickedEmoji.style.opacity = '1';
+            clickedEmoji.style.transform = 'none'; // Сброс всех трансформаций
+
+            clickedEmoji.style.position = 'fixed';
+            clickedEmoji.style.left = `${rect.left}px`;
+            clickedEmoji.style.top = `${rect.top}px`;
+            clickedEmoji.style.zIndex = '1001';
+            clickedEmoji.classList.add('falling');
+
+            const randomX = (Math.random() - 0.5) * 400; // -200 to 200 pixels horizontal deviation
+            const randomRotation = Math.random() * 1080; // 0 to 1080 degrees rotation
+            const fallAnimationDuration = 2 + Math.random() * 2; // 2 to 4 seconds
+
+            clickedEmoji.style.setProperty('--random-x', `${randomX}px`);
+            clickedEmoji.style.setProperty('--random-rotation', `${randomRotation}deg`);
+            clickedEmoji.style.setProperty('--emoji-size', `${size}px`);
+            clickedEmoji.style.animation = `fall ${fallAnimationDuration}s forwards`;
+
+            clickedEmoji.addEventListener('animationend', () => {
+                // clickedEmoji.remove(); // Эмодзи остается на экране
+                createFloatingEmoji(); // Создаем новый эмодзи взамен
             }, { once: true });
-        }, lifeTime);
-
-        return shape;
-    }
-
-    // Параллакс эффект
-    function updateParallax() {
-        const centerX = backgroundAnimation.offsetWidth / 2;
-        const centerY = backgroundAnimation.offsetHeight / 2;
-
-        const offsetX = (mouseX - centerX) * 0.03;
-        const offsetY = (mouseY - centerY) * 0.03;
-
-        emojiShapes.forEach((shape, index) => {
-            const depth = (parseFloat(shape.style.fontSize) / 55) * 2;
-            const delay = index * 0.1;
-            
-            shape.style.transform = `translate(${offsetX * depth}px, ${offsetY * depth}px) translateZ(${delay}px)`;
         });
-
-        animationId = requestAnimationFrame(updateParallax);
     }
 
-    // Создаем 20 эмодзи один раз при загрузке
-    for (let i = 0; i < 20; i++) {
-        createEmoji();
+    // Создаем несколько эмодзи при загрузке страницы
+    for (let i = 0; i < 30; i++) {
+        createFloatingEmoji();
     }
-
-    // Обработчик движения мыши - только для параллакса
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-
-    // Запускаем параллакс анимацию
-    updateParallax();
 
     // Рендерим портфолио по умолчанию (первая вкладка)
     renderPortfolio('3d_print');
+
+    // Обработчик клика для логотипа
+    const logo = document.querySelector('.logo');
+    if (logo) {
+        logo.addEventListener('click', () => {
+            logo.classList.toggle('straight');
+        });
+    }
+
+
+    // Функция для открытия лайтбокса
+    function openLightbox(imageSrc, category, index) {
+        const lightbox = document.createElement('div');
+        lightbox.id = 'lightbox';
+        lightbox.classList.add('active');
+
+        const img = document.createElement('img');
+        img.src = imageSrc;
+        img.alt = portfolioItems[category][index].alt;
+
+        const closeBtn = document.createElement('button');
+        closeBtn.classList.add('lightbox-close');
+        closeBtn.innerHTML = '&times;';
+        closeBtn.addEventListener('click', () => {
+            lightbox.remove();
+        });
+
+        const prevBtn = document.createElement('button');
+        prevBtn.classList.add('lightbox-nav', 'prev');
+        prevBtn.innerHTML = '&#10094;'; // Левая стрелка
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Предотвращаем закрытие лайтбокса при клике на стрелку
+            navigateLightbox(-1, category);
+        });
+
+        const nextBtn = document.createElement('button');
+        nextBtn.classList.add('lightbox-nav', 'next');
+        nextBtn.innerHTML = '&#10095;'; // Правая стрелка
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Предотвращаем закрытие лайтбокса при клике на стрелку
+            navigateLightbox(1, category);
+        });
+
+        lightbox.appendChild(img);
+        lightbox.appendChild(closeBtn);
+        lightbox.appendChild(prevBtn);
+        lightbox.appendChild(nextBtn);
+        document.body.appendChild(lightbox);
+
+        currentImageIndex = index; // Устанавливаем текущий индекс
+    }
+
+    // Функция для навигации по лайтбоксу
+    function navigateLightbox(direction, category) {
+        const items = portfolioItems[category];
+        currentImageIndex = (currentImageIndex + direction + items.length) % items.length;
+        const newImageSrc = items[currentImageIndex].src;
+        const lightboxImg = document.querySelector('#lightbox img');
+        if (lightboxImg) {
+            lightboxImg.src = newImageSrc;
+            lightboxImg.alt = items[currentImageIndex].alt;
+        }
+    }
 });

@@ -11,6 +11,7 @@
 
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: 80px; /* Adjust this value based on your header's height */
 }
 
 body {
@@ -64,6 +65,12 @@ header nav {
     font-size: 1.8em;
     font-weight: 700;
     color: #fff;
+    transform: rotate(-5deg); /* Наклон по умолчанию */
+    transition: transform 0.2s ease-out;
+}
+
+.logo.straight {
+    transform: rotate(0deg); /* Выравнивание при наличии класса */
 }
 
 header nav ul {
@@ -99,6 +106,8 @@ header nav ul li a:hover {
     color: #fff;
     overflow: hidden;
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    margin-bottom: 40px; /* Добавляем отступ снизу */
+    border-radius: 15px; /* Закругляем все углы фрейма */
 }
 
 .hero-content {
@@ -176,118 +185,56 @@ header nav ul li a:hover {
 
 .btn:hover {
     background: linear-gradient(135deg, #6ac5ed 0%, #ff69b4 100%);
-    transform: translateY(-5px) scale(1.05);
+    transform: translateY(-3px) scale(1.02);
     text-decoration: none;
-    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.4);
-    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4);
+    border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* Background Animations */
-.background-animation {
+/* Новые анимации для эмодзи */
+.floating-emoji {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.animated-shape {
-    position: absolute;
-
-    pointer-events: none;
-    /* transition: transform 0.2s ease-out, opacity 1s ease; */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    animation: fadeInOut 12s infinite ease-in-out;
-    will-change: transform;
-}
-
-.animated-shape.fade-out {
     opacity: 0;
-    transform: scale(0.2) translateY(-30px) rotate(180deg);
-    transition: all 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: floatAndFade 10s infinite ease-in forwards;
+    will-change: transform, opacity;
 }
 
-.animated-shape.fade-in {
-    opacity: 0;
-    transform: scale(0.5) translateY(20px);
-    animation: fadeInScale 2s ease-out forwards;
-}
-
-@keyframes fadeInScale {
+@keyframes floatAndFade {
     0% {
+        transform: translateY(0) rotate(0deg) scale(0.8);
         opacity: 0;
-        transform: scale(0.5) translateY(20px);
     }
-    50% {
-        opacity: 0.6;
-        transform: scale(1.1) translateY(-5px);
+    10% {
+        opacity: 1;
     }
-    100% {
-        opacity: 0.8;
-        transform: scale(1) translateY(0);
-    }
-}
-
-@keyframes floatEffect {
-    0% {
-        transform: translateY(0) rotate(0deg) scale(1);
-    }
-    25% {
-        transform: translateY(-15px) rotate(3deg) scale(1.1);
-    }
-    50% {
-        transform: translateY(-25px) rotate(-2deg) scale(0.9);
-    }
-    75% {
-        transform: translateY(-10px) rotate(4deg) scale(1.05);
+    90% {
+        opacity: 1;
     }
     100% {
-        transform: translateY(0) rotate(0deg) scale(1);
+        transform: translateY(-100vh) rotate(360deg) scale(1.2);
+        opacity: 0;
     }
 }
 
-@keyframes fadeInOut {
-    0%, 100% {
-        opacity: 0.8;
-    }
-    50% {
-        opacity: 0.4;
+
+
+/* Keyframes for falling animation */
+@keyframes fall {
+    to {
+        transform: translateY(calc(100vh - var(--emoji-size))) translateX(var(--random-x)) rotate(var(--random-rotation));
+        opacity: 1;
     }
 }
 
-/* Дополнительные анимации для эмодзи */
-.animated-shape.bounce {
-    animation: bounceEffect 6s infinite ease-in-out;
+.emoji.falling {
+    animation-fill-mode: forwards;
 }
 
-@keyframes bounceEffect {
-    0%, 100% {
-        transform: translateY(0) scale(1);
-    }
-    50% {
-        transform: translateY(-30px) scale(1.2);
-    }
+.emoji.falling {
+    position: fixed;
+    transition: none; /* Disable transition during falling */
 }
 
-.animated-shape.spin {
-    animation: spinEffect 10s infinite linear;
-}
-
-@keyframes spinEffect {
-    0% {
-        transform: rotate(0deg) scale(1);
-    }
-    50% {
-        transform: rotate(180deg) scale(1.1);
-    }
-    100% {
-        transform: rotate(360deg) scale(1);
-    }
-}
-
-/* Main Content */
 main {
     padding: 40px 20px;
     max-width: 1200px;
@@ -318,7 +265,7 @@ main {
 
 .card {
     background-color: var(--card-background);
-    border-radius: 15px;
+    border-radius: 15px; /* Закругляем края карточек */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
     padding: 30px;
     margin-bottom: 40px;
@@ -546,16 +493,97 @@ main {
     }
 }
 
-/* Footer */
+.logo.tilted {
+    transform: rotate(-5deg);
+    transition: transform 0.2s ease-out;
+}
 footer {
     background-color: var(--footer-background);
     color: #fff;
     text-align: center;
     padding: 20px 0;
     margin-top: 40px;
+    border-radius: 15px; /* Закругленные все углы */
 }
 
 footer p {
     margin: 0;
     font-size: 0.9em;
+}
+
+/* Lightbox Styles */
+#lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#lightbox.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: #fff;
+    font-size: 40px;
+    cursor: pointer;
+    z-index: 2001;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.lightbox-close:hover {
+    color: var(--primary-color);
+}
+
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 60px;
+    cursor: pointer;
+    z-index: 2001;
+    background: none;
+    border: none;
+    padding: 0 20px;
+    transition: color 0.3s ease;
+}
+
+.lightbox-nav:hover {
+    color: var(--primary-color);
+}
+
+.lightbox-nav.prev {
+    left: 20px;
+}
+
+.lightbox-nav.next {
+    right: 20px;
+}
+
+.lightbox-nav:hover {
+    color: var(--primary-color);
 }
