@@ -3,18 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ Анжелика 3D</title>
+    <title>Анжелика 3D</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Yandex.Metrika counter --> 
+    <script type="text/javascript"> 
+        (function(m,e,t,r,i,k,a){ 
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; 
+            m[i].l=1*new Date(); 
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }} 
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a) 
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=104706152', 'ym'); 
+    
+        ym(104706152, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true}); 
+    </script> 
+    <noscript><div><img src="https://mc.yandex.ru/watch/104706152" style="position:absolute; left:-9999px;" alt="" /></div></noscript> 
+    <!-- /Yandex.Metrika counter -->
 </head>
 <body>
     <header>
         <nav>
             <div class="logo">✨ Анжелика 3D</div>
             <ul>
-                <li><a href="#about">Обо мне</a></li>
-                <li><a href="#portfolio">Портфолио</a></li>
-                <li><a href="#contact">Контакты</a></li>
+                <li><div class="nav-button" data-target="#about">Обо мне</div></li>
+                <li><div class="nav-button" data-target="#portfolio">Портфолио</div></li>
+                <li><div class="nav-button" data-target="#contact">Контакты</div></li>
             </ul>
         </nav>
     </header>
@@ -34,15 +48,16 @@
         <section id="about" class="card">
             <h2>Обо мне</h2>
             <p>Привет! Я Анжелика, 3D моделлер с опытом создания детализированных моделей для различных проектов. Моя страсть — воплощать идеи в жизнь через трехмерную графику, будь то персонажи, объекты или архитектурные элементы. Я стремлюсь к совершенству в каждой детали и постоянно изучаю новые техники и инструменты.</p>
-            <p>В моем портфолио вы найдете примеры работ по 3D печати, моделированию для игр и созданию технических моделей.</p>
+            <p>В моем портфолио вы найдете примеры работ по 3D печати, моделированию для игр, творчеству и мастер моделям.</p>
         </section>
 
         <section id="portfolio" class="card">
             <h2>Портфолио</h2>
             <div class="tabs">
-                <button class="tab-button active" data-category="3d_print">3д печать</button>
+                <button class="tab-button active" data-category="3d_print">3D печать</button>
                 <button class="tab-button" data-category="games">Игры</button>
-                <button class="tab-button" data-category="technical_models">Технические модели</button>
+                <button class="tab-button" data-category="master_model">Мастер модель</button>
+                <button class="tab-button" data-category="creativity">Творчество</button>
             </div>
             <div id="portfolio-gallery" class="gallery">
                 <!-- Галерея будет заполнена динамически -->
