@@ -642,6 +642,15 @@ footer p {
     color: var(--primary-color);
 }
 
+.lightbox.active {
+    display: flex;
+}
+
+.no-scroll {
+    overflow: hidden;
+}
+
+/* Стили для кнопок навигации */
 .lightbox-nav {
     position: absolute;
     top: 50%;

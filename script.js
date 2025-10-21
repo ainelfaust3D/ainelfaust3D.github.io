@@ -250,28 +250,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Define the click listener function
     const logoClickListener = () => {
-        logo.classList.toggle('straight');
+        const wasStraightBeforeClick = logo.classList.contains('straight');
         clickCount++;
 
         if (clickCount === 5) {
-            const logoCopy = logo.cloneNode(true);
-            logoCopy.classList.add('falling-logo');
-            logoCopy.style.position = 'fixed';
-            logoCopy.style.left = logo.getBoundingClientRect().left + 'px';
-            logoCopy.style.top = logo.getBoundingClientRect().top + 'px';
-            logoCopy.style.width = logo.getBoundingClientRect().width + 'px';
-            logoCopy.style.height = logo.getBoundingClientRect().height + 'px';
-            logoCopy.style.zIndex = '9999';
-            document.body.appendChild(logoCopy);
+            const originalTransition = logo.style.transition;
+            logo.classList.add('straight'); // Запускаем плавное выпрямление
 
-            logo.style.opacity = '0.01'; // Почти прозрачный
-            logo.style.pointerEvents = 'none'; // Отключаем клики на оригинальном логотипе
-            logo.removeEventListener('click', logoClickListener); // Удаляем слушатель кликов
+            // Ждем завершения анимации выпрямления
+            setTimeout(() => {
+                logo.style.transition = 'none'; // Временно отключаем transition для точного измерения
+                void logo.offsetWidth; // Принудительная перерисовка
 
-            logoCopy.addEventListener('animationend', () => {
-                logoCopy.remove(); // Удаляем падающую копию логотипа
-                animateCarriedLogo(logo, logoClickListener); // Запускаем анимацию деда, передавая оригинальный логотип и слушатель
-            }, { once: true });
+                const logoRect = logo.getBoundingClientRect();
+
+                const logoCopy = logo.cloneNode(true);
+                logoCopy.classList.add('falling-logo');
+                logoCopy.style.position = 'fixed';
+                logoCopy.style.left = logoRect.left + 'px';
+                logoCopy.style.top = logoRect.top + 'px';
+                logoCopy.style.width = logoRect.width + 'px';
+                logoCopy.style.height = logoRect.height + 'px';
+                logoCopy.style.zIndex = '9999';
+                document.body.appendChild(logoCopy);
+
+                // Восстанавливаем исходное состояние оригинального логотипа и transition
+                if (!wasStraightBeforeClick) {
+                    logo.classList.remove('straight');
+                }
+                logo.style.transition = originalTransition; // Восстанавливаем оригинальный transition
+
+                logo.style.opacity = '0.01';
+                logo.style.pointerEvents = 'none';
+                logo.removeEventListener('click', logoClickListener);
+
+                logoCopy.addEventListener('animationend', () => {
+                    logoCopy.remove();
+                    animateCarriedLogo(logo, logoClickListener);
+                }, { once: true });
+            }, 350); // 350ms, чтобы дать время для завершения 300ms CSS transition
+        } else {
+            // Для обычных кликов просто переключаем класс. CSS transition сделает анимацию.
+            logo.classList.toggle('straight');
         }
     };
 
@@ -281,73 +301,82 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function animateCarriedLogo(originalLogo, listener) {
         const emojiPairs = [
-            { left: '🐱', right: '🐶' }, // Кошка и собака
-            { left: '👵', right: '👴' }, // Бабка и дед
-            { left: '👨', right: '👩' }, // Мужчина и женщина
-            { left: '😎', right: '😔' }  // Крутой смайлик и грустный
+            { left: '🐱', right: '🐶' },
+            { left: '👵', right: '👴' },
+            { left: '👨', right: '👩' },
+            { left: '😎', right: '😔' }
         ];
 
         const randomPair = emojiPairs[Math.floor(Math.random() * emojiPairs.length)];
 
-        // Создаем контейнер для эмодзи и переносимого логотипа
         const animationContainer = document.createElement('div');
         animationContainer.classList.add('carried-logo-animation-container');
         animationContainer.style.position = 'fixed';
         animationContainer.style.zIndex = '10000';
-        animationContainer.style.top = `${originalLogo.getBoundingClientRect().top}px`; // Выравниваем по верхней границе оригинального логотипа
-        animationContainer.style.left = `${originalLogo.getBoundingClientRect().left}px`; // Это будет конечная левая позиция
-        animationContainer.style.transform = 'translateX(-100vw)'; // Начинаем за пределами экрана слева
+
+        const wasOriginalLogoStraight = originalLogo.classList.contains('straight');
+        const originalTransition = originalLogo.style.transition; // Сохраняем оригинальный transition
+        originalLogo.style.transition = 'none'; // Временно отключаем transition
+
+        originalLogo.classList.add('straight'); // Принудительно делаем прямым
+
+        // Принудительная перерисовка
+        void originalLogo.offsetWidth;
+
+        animationContainer.style.top = `${originalLogo.getBoundingClientRect().top}px`;
+        animationContainer.style.left = `${originalLogo.getBoundingClientRect().left}px`;
+        animationContainer.style.transform = 'translateX(-100vw)';
         document.body.appendChild(animationContainer);
 
-        // Создаем левый эмодзи
+        // Восстанавливаем исходное состояние класса 'straight' и transition
+        if (!wasOriginalLogoStraight) {
+            originalLogo.classList.remove('straight');
+        }
+        originalLogo.style.transition = originalTransition; // Восстанавливаем оригинальный transition
+
         const leftEmoji = document.createElement('span');
-        leftEmoji.textContent = randomPair.left; // Выбранный левый эмодзи
+        leftEmoji.textContent = randomPair.left;
         leftEmoji.classList.add('animal-emoji');
-        leftEmoji.style.position = 'absolute'; // Позиционируем относительно контейнера
-        leftEmoji.style.left = '-60px'; // Регулируем позицию относительно логотипа
+        leftEmoji.style.position = 'absolute';
+        leftEmoji.style.left = '-60px';
         leftEmoji.style.top = '0';
         leftEmoji.style.fontSize = '50px';
         animationContainer.appendChild(leftEmoji);
 
-        // Создаем правый эмодзи
         const rightEmoji = document.createElement('span');
-        rightEmoji.textContent = randomPair.right; // Выбранный правый эмодзи
+        rightEmoji.textContent = randomPair.right;
         rightEmoji.classList.add('animal-emoji');
-        rightEmoji.style.position = 'absolute'; // Позиционируем относительно контейнера
-        rightEmoji.style.left = `${originalLogo.getBoundingClientRect().width + 10}px`; // Регулируем позицию справа от логотипа
+        rightEmoji.style.position = 'absolute';
+        rightEmoji.style.left = `${originalLogo.getBoundingClientRect().width + 10}px`;
         rightEmoji.style.top = '0';
         rightEmoji.style.fontSize = '50px';
         animationContainer.appendChild(rightEmoji);
 
-        // Создаем копию логотипа, которую будут нести
         const carriedLogo = originalLogo.cloneNode(true);
         carriedLogo.classList.add('carried-logo-on-animals');
-        carriedLogo.style.position = 'absolute'; // Позиционируем относительно контейнера
-        carriedLogo.style.left = '0'; // Позиционируем в начале контейнера
+        carriedLogo.style.position = 'absolute';
+        carriedLogo.style.left = '0';
         carriedLogo.style.top = '0';
         carriedLogo.style.width = originalLogo.getBoundingClientRect().width + 'px';
         carriedLogo.style.height = originalLogo.getBoundingClientRect().height + 'px';
         carriedLogo.style.opacity = '1';
         animationContainer.appendChild(carriedLogo);
 
-        // Запускаем анимацию для контейнера
         animationContainer.classList.add('slide-in-animation');
 
         animationContainer.addEventListener('animationend', (event) => {
             if (event.animationName === 'slide-in-keyframes') {
-                // Анимация входа завершена
-                carriedLogo.remove(); // Удаляем переносимый логотип
-                originalLogo.style.opacity = '1'; // Восстанавливаем видимость оригинального логотипа
-                originalLogo.style.pointerEvents = 'auto'; // Включаем клики
-                originalLogo.classList.add('straight'); // Убеждаемся, что логотип ровный
-                originalLogo.addEventListener('click', listener); // Повторно прикрепляем слушатель кликов
-                clickCount = 0; // Сбрасываем счетчик кликов
+                carriedLogo.remove();
+                originalLogo.style.opacity = '1';
+                originalLogo.style.pointerEvents = 'auto';
+                originalLogo.classList.add('straight');
+                originalLogo.addEventListener('click', listener);
+                clickCount = 0;
 
                 animationContainer.classList.remove('slide-in-animation');
-                animationContainer.classList.add('slide-out-animation'); // Запускаем анимацию выхода
+                animationContainer.classList.add('slide-out-animation');
             } else if (event.animationName === 'slide-out-keyframes') {
-                // Анимация выхода завершена
-                animationContainer.remove(); // Удаляем контейнер
+                animationContainer.remove();
             }
         }, { once: false });
     }
@@ -390,6 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lightbox.appendChild(prevBtn);
         lightbox.appendChild(nextBtn);
         document.body.appendChild(lightbox);
+        document.body.classList.add('no-scroll'); // Добавляем класс для отключения прокрутки страницы
 
         currentImageIndex = index; // Устанавливаем текущий индекс
 
@@ -410,6 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeBtn.addEventListener('click', () => {
             lightbox.remove();
             document.removeEventListener('keydown', handleKeyDown);
+            document.body.classList.remove('no-scroll'); // Удаляем класс при закрытии
         });
 
         // Закрытие лайтбокса по клику вне картинки
@@ -417,6 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target === lightbox) {
                 lightbox.remove();
                 document.removeEventListener('keydown', handleKeyDown);
+                document.body.classList.remove('no-scroll'); // Удаляем класс при закрытии
             }
         });
 
@@ -450,8 +482,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 translateY -= (mouseY - rect.height / 2) * (scale - oldScale) / oldScale;
 
                 // Ограничиваем смещение, чтобы изображение не выходило за пределы экрана
-                const maxTranslateX = (rect.width * scale - rect.width) / 2;
-                const maxTranslateY = (rect.height * scale - rect.height) / 2;
+                const lightboxRect = lightbox.getBoundingClientRect();
+                const maxTranslateX = Math.max(0, (rect.width * scale - lightboxRect.width) / 2);
+                const maxTranslateY = Math.max(0, (rect.height * scale - lightboxRect.height) / 2);
 
                 translateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, translateX));
                 translateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, translateY));
@@ -459,10 +492,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 img.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
                 img.classList.toggle('zoomable', scale !== 1);
 
-                if (scale === 1) {
+                if (scale <= 1) {
                     translateX = 0;
                     translateY = 0;
+                    scale = 1;
                     img.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+                    img.classList.remove('zoomable');
                 }
             }
         });
@@ -488,8 +523,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const rect = img.getBoundingClientRect();
             const lightboxRect = lightbox.getBoundingClientRect();
 
-            const maxTranslateX = (rect.width * scale - lightboxRect.width) / (2 * scale);
-            const maxTranslateY = (rect.height * scale - lightboxRect.height) / (2 * scale);
+            const maxTranslateX = Math.max(0, (rect.width * scale - lightboxRect.width) / 2);
+            const maxTranslateY = Math.max(0, (rect.height * scale - lightboxRect.height) / 2);
 
             translateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, newTranslateX));
             translateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, newTranslateY));
@@ -513,6 +548,76 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 img.style.cursor = 'zoom-in';
             }
+        });
+
+        // Добавляем зум для изображений в лайтбоксе (touch events)
+        let startDistance = 0;
+        let initialScale = 1;
+        let initialTranslateX = 0;
+        let initialTranslateY = 0;
+        let lastTouchX = 0;
+        let lastTouchY = 0;
+
+        img.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Предотвращаем стандартное поведение браузера (зум страницы)
+            if (e.touches.length === 2) {
+                startDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                initialScale = scale;
+                isDragging = false; // Отключаем петаскивание при мультитаче
+            } else if (e.touches.length === 1) {
+                isDragging = true;
+                lastTouchX = e.touches[0].clientX;
+                lastTouchY = e.touches[0].clientY;
+                initialTranslateX = translateX;
+                initialTranslateY = translateY;
+            }
+        });
+
+        img.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (e.touches.length === 2) {
+                const currentDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                scale = (currentDistance / startDistance) * initialScale;
+                scale = Math.max(1, Math.min(scale, 4)); // Ограничиваем масштаб от 1 до 4
+
+                img.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+                img.classList.toggle('zoomable', scale !== 1);
+            } else if (e.touches.length === 1 && isDragging) {
+                const deltaX = e.touches[0].clientX - lastTouchX;
+                const deltaY = e.touches[0].clientY - lastTouchY;
+
+                let newTranslateX = initialTranslateX + deltaX;
+                let newTranslateY = initialTranslateY + deltaY;
+
+                const rect = img.getBoundingClientRect();
+                const lightboxRect = lightbox.getBoundingClientRect();
+
+                const maxTranslateX = Math.max(0, (rect.width * scale - lightboxRect.width) / 2);
+                const maxTranslateY = Math.max(0, (rect.height * scale - lightboxRect.height) / 2);
+
+                translateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, newTranslateX));
+                translateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, newTranslateY));
+
+                img.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+            }
+        });
+
+        img.addEventListener('touchend', () => {
+            isDragging = false;
+            if (scale <= 1) {
+                scale = 1;
+                translateX = 0;
+                translateY = 0;
+            }
+            if (scale > 4) scale = 4;
+            img.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+            img.classList.toggle('zoomable', scale !== 1);
         });
     }
 
