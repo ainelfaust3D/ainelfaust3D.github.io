@@ -246,14 +246,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Обработчик клика для логотипа
     const logo = document.querySelector('.logo');
-    let clickCount = 0;
+    let logoClickCount = 0;
+    let logoFirstClickTracked = false;
 
-    // Define the click listener function
     const logoClickListener = () => {
+        logoClickCount++;
+        if (!logoFirstClickTracked) {
+            ym(104706152, 'reachGoal', 'logo_first_click');
+            logoFirstClickTracked = true;
+            console.log('Yandex Metrika goal: logo_first_click');
+        }
+        if (logoClickCount === 5) {
+            ym(104706152, 'reachGoal', 'logo_fifth_click');
+            console.log('Yandex Metrika goal: logo_fifth_click');
+        }
         const wasStraightBeforeClick = logo.classList.contains('straight');
-        clickCount++;
 
-        if (clickCount === 5) {
+        if (logoClickCount === 5) {
             const originalTransition = logo.style.transition;
             logo.classList.add('straight'); // Запускаем плавное выпрямление
 
@@ -371,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 originalLogo.style.pointerEvents = 'auto';
                 originalLogo.classList.add('straight');
                 originalLogo.addEventListener('click', listener);
-                clickCount = 0;
+                logoClickCount = 0;
 
                 animationContainer.classList.remove('slide-in-animation');
                 animationContainer.classList.add('slide-out-animation');
