@@ -9,3 +9,17 @@ export function trackLogoClick(clickCount) {
         }
     }
 }
+
+export function trackNewHighScore(score) {
+    if (typeof ym === 'function') {
+        ym(104706152, 'reachGoal', 'new_high_score', { score: score });
+        console.log('Yandex Metrika goal: new_high_score', { score: score });
+    }
+}
+
+export function trackEmojiClick() {
+    if (typeof ym === 'function') {
+        ym(104706152, 'reachGoal', 'emoji_click');
+        console.log('Yandex Metrika goal: emoji_click');
+    }
+}

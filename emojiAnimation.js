@@ -1,3 +1,4 @@
+import { trackNewHighScore, trackEmojiClick } from './yandexMetrika.js';
 export function initEmojiAnimation() {
     const backgroundAnimation = document.querySelector('.background-animation');
     const hero = document.getElementById('hero');
@@ -158,7 +159,7 @@ export function initEmojiAnimation() {
                                     setCookie('highScore', highScore, 365); // Сохраняем рекорд на 365 дней
                                     updateHighScoreDisplay();
                                     if (typeof ym === 'function') {
-                                        ym(104706152, 'reachGoal', 'new_high_score', { score: highScore });
+                                        trackNewHighScore(highScore);
                                     }
                                 }
 
@@ -401,7 +402,10 @@ export function initEmojiAnimation() {
             const rect = clickedEmoji.getBoundingClientRect();
             caughtEmojisCount++;
             if (typeof ym === 'function') {
-                ym(104706152, 'reachGoal', 'emoji_click');
+                
+                
+                
+                trackEmojiClick();
             }
             if (caughtEmojisCount > highScore) {
                 highScore = caughtEmojisCount;
@@ -412,7 +416,7 @@ export function initEmojiAnimation() {
 
             updateEmojiCount();
             if (typeof ym === 'function') {
-                ym(104706152, 'reachGoal', 'emoji_caught', { count: caughtEmojisCount });
+      
             }
             if (!gameStarted) {
                 startGame(rect.top);

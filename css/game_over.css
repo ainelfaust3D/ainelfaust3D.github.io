@@ -14,6 +14,12 @@
     white-space: nowrap;
 }
 
+@media (max-width: 768px) {
+    .game-over {
+        font-size: 4em; /* Уменьшаем размер шрифта для мобильных устройств */
+    }
+}
+
 .game-over.active {
     visibility: visible;
     opacity: 1;
