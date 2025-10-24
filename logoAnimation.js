@@ -1,11 +1,51 @@
 import { trackLogoClick } from './yandexMetrika.js';
 
+// Инициализация звуков
+const creakSound = new Howl({
+    src: ['./audio/creak.mp3'],
+    volume: 0.5
+});
+
+const fallSound = new Howl({
+    src: ['./audio/fall.mp3'],
+    volume: 0
+});
+
+const heroAppearSound = new Howl({
+    src: ['./audio/hero_appear.mp3'],
+    volume: 0.5
+});
+
+const logoPlaceSound = new Howl({
+    src: ['./audio/logo_placed.mp3'],
+    volume: 0.5
+});
+
+const stompingSounds = [
+    new Howl({
+        src: ['./audio/stomping.mp3'],
+        volume: 0,
+        loop: true
+    }),
+    new Howl({
+        src: ['./audio/stomping2.mp3'],
+        volume: 0,
+        loop: true
+    }),
+    new Howl({
+        src: ['./audio/stomping3.mp3'],
+        volume: 0,
+        loop: true
+    })
+];
+
 export function initLogoAnimation() {
     const logo = document.querySelector('.logo');
     let logoClickCount = 0;
     let logoFirstClickTracked = false;
 
     const logoClickListener = () => {
+        creakSound.play(); // Воспроизводим звук скрипа при каждом клике
         logoClickCount++;
         if (!logoFirstClickTracked) {
             trackLogoClick(1);
@@ -13,6 +53,10 @@ export function initLogoAnimation() {
         }
         if (logoClickCount === 5) {
             trackLogoClick(5);
+            setTimeout(() => {
+            fallSound.play();
+            fallSound.fade(0, 0.7, 500);
+        }, 1000); // Задержка 1 секунда
         }
         const wasStraightBeforeClick = logo.classList.contains('straight');
 
@@ -63,6 +107,10 @@ export function initLogoAnimation() {
     }
 
     function animateCarriedLogo(originalLogo, listener) {
+        const randomIndex = Math.floor(Math.random() * stompingSounds.length);
+        stompingSounds[randomIndex].play();
+        stompingSounds[randomIndex].fade(0, 0.4, 2000);
+
         const emojiPairs = [
             { left: '🐱', right: '🐶' },
             { left: '👵', right: '👴' },
@@ -135,10 +183,18 @@ export function initLogoAnimation() {
                 originalLogo.classList.add('straight');
                 originalLogo.addEventListener('click', listener);
                 logoClickCount = 0;
+                logoPlaceSound.play(); // Воспроизводим звук установки логотипа
 
                 animationContainer.classList.remove('slide-in-animation');
                 animationContainer.classList.add('slide-out-animation');
             } else if (event.animationName === 'slide-out-keyframes') {
+                stompingSounds.forEach(sound => {
+                    sound.fade(0.4, 0, 500);
+                    setTimeout(() => sound.stop(), 500);
+                    setTimeout(() => sound.stop(), 500);
+                });
+                fallSound.fade(0.7, 0, 500);
+                setTimeout(() => fallSound.stop(), 3000);
                 animationContainer.remove();
             }
         }, { once: false });

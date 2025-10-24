@@ -1,5 +1,81 @@
 import { trackNewHighScore, trackEmojiClick } from './yandexMetrika.js';
+const heroAppearSound = new Howl({
+    src: ['./audio/hero_appear.mp3'],
+    volume: 0.6
+});
+
+const gameOverSound = new Howl({
+    src: ['./audio/game_over.mp3'],
+    volume: 0.7
+});
+
+const emojiClickSound = new Howl({
+    src: ['./audio/emoji_click.mp3'],
+    volume: 0.5
+});
+
+const gameStatusMusic = new Howl({
+    src: ['./audio/game_status_music.mp3'],
+    volume: 0.3,
+    loop: true
+});
+
+const ambientMusic = new Howl({
+    src: ['./audio/ambient_music.mp3'],
+    volume: 0.2,
+    loop: true
+});
+
+const stompingSounds = [
+    new Howl({
+        src: ['./audio/stomping.mp3'],
+        volume: 0.4,
+        loop: true
+    }),
+    new Howl({
+        src: ['./audio/stomping2.mp3'], // Предполагаем, что у нас есть файл stomping2.mp3
+        volume: 0.4,
+        loop: true
+    }),
+    new Howl({
+        src: ['./audio/stomping3.mp3'], // Предполагаем, что у нас есть файл stomping3.mp3
+        volume: 0.4,
+        loop: true
+    })
+];
+
+const lifeLostSounds = [
+    new Howl({
+        src: ['./audio/life_lost1.mp3'], // Предполагаем, что у нас есть файл life_lost1.mp3
+        volume: 0.6
+    }),
+    new Howl({
+        src: ['./audio/life_lost2.mp3'], // Предполагаем, что у нас есть файл life_lost2.mp3
+        volume: 0.6
+    }),
+    new Howl({
+        src: ['./audio/life_lost3.mp3'], // Предполагаем, что у нас есть файл life_lost3.mp3
+        volume: 0.6
+    })
+];
+
+const scoreMilestoneSounds = [
+    new Howl({
+        src: ['./audio/score_50_1.mp3'],
+        volume: 0.5
+    }),
+    new Howl({
+        src: ['./audio/score_50_2.mp3'],
+        volume: 0.5
+    }),
+    new Howl({
+        src: ['./audio/score_50_3.mp3'],
+        volume: 0.5
+    })
+];
+
 export function initEmojiAnimation() {
+    ambientMusic.play(); // Запускаем фоновую музыку при загрузке страницы
     const backgroundAnimation = document.querySelector('.background-animation');
     const hero = document.getElementById('hero');
     const container = document.getElementById('emoji-container');
@@ -74,6 +150,13 @@ export function initEmojiAnimation() {
             emojiCountElement.textContent = caughtEmojisCount;
             emojiCountElement.style.display = 'block';
             emojiCountElement.classList.add('animate');
+            if (caughtEmojisCount > 0 && caughtEmojisCount % 10 === 0) {
+                emojiCountElement.classList.add('milestone-score');
+                scoreMilestoneSounds[Math.floor(Math.random() * scoreMilestoneSounds.length)].play();
+                setTimeout(() => {
+                    emojiCountElement.classList.remove('milestone-score');
+                }, 2000); // Удаляем класс через 2 секунды
+            }
             setTimeout(() => {
                 emojiCountElement.classList.remove('animate');
             }, 200);
@@ -119,8 +202,10 @@ export function initEmojiAnimation() {
         gameOver = true;
         if (spawnInterval) clearInterval(spawnInterval);
         if (lifeCheckInterval) clearInterval(lifeCheckInterval);
+        gameStatusMusic.stop(); // Останавливаем музыку статуса игры
 
         const heroTitle = document.querySelector('#hero h1');
+        heroAppearSound.play(); // Воспроизводим звук появления героя
         const gameOverElement = document.getElementById('game-over');
 
         // Анимация исчезновения Ainel Faust 3D
@@ -134,51 +219,52 @@ export function initEmojiAnimation() {
                 heroTitle.removeEventListener('animationend', handleHeroTitleAnimationEnd);
 
                 // После исчезновения Ainel Faust 3D, показываем Game Over
-                if (gameOverElement) {
-                    gameOverElement.style.visibility = 'visible';
-                    gameOverElement.style.opacity = '0';
+                setTimeout(() => {
+                    if (gameOverElement) {
+                        // gameOverSound.play(); // Воспроизводим звук Game Over
+                        // gameOverElement.style.display = 'block';
+                    }
+                }, 1000); // Задержка перед появлением Game Over
+            });
+        }
+
+        if (gameOverElement) {
+            gameOverSound.play(); // Воспроизводим звук Game Over
+            gameOverElement.style.display = 'block';
+            gameOverElement.style.visibility = 'visible';
+            gameOverElement.style.opacity = '0';
+            gameOverElement.style.animation = 'none'; // Сброс анимации
+            void gameOverElement.offsetWidth; // Принудительная перерисовка
+            gameOverElement.style.animation = 'gameOverFadeIn 4s forwards'; // Ускоряем в 2 раза
+            gameOverElement.addEventListener('animationend', function handleGameOverFadeInEnd() {
+                gameOverElement.removeEventListener('animationend', handleGameOverFadeInEnd);
+                // После появления Game Over, ждем 1 секунду (было 2) и запускаем исчезновение
+                setTimeout(() => {
                     gameOverElement.style.animation = 'none'; // Сброс анимации
                     void gameOverElement.offsetWidth; // Принудительная перерисовка
-                    gameOverElement.style.animation = 'gameOverFadeIn 0.5s forwards'; // Ускоряем в 2 раза
-                    gameOverElement.addEventListener('animationend', function handleGameOverFadeInEnd() {
-                        gameOverElement.removeEventListener('animationend', handleGameOverFadeInEnd);
-                        // После появления Game Over, ждем 1 секунду (было 2) и запускаем исчезновение
-                        setTimeout(() => {
-                            gameOverElement.style.animation = 'none'; // Сброс анимации
-                            void gameOverElement.offsetWidth; // Принудительная перерисовка
-                            gameOverElement.style.animation = 'gameOverFadeOut 0.5s forwards'; // Ускоряем в 2 раза
-                            gameOverElement.addEventListener('animationend', function handleGameOverFadeOutEnd() {
-                                gameOverElement.style.visibility = 'hidden';
-                                gameOverElement.style.opacity = '0';
-                                gameOverElement.style.animation = ''; // Очищаем свойство animation
-                                gameOverElement.removeEventListener('animationend', handleGameOverFadeOutEnd);
+                    gameOverElement.style.animation = 'gameOverFadeOut 0.5s forwards'; // Ускоряем в 2 раза
+                    gameOverElement.addEventListener('animationend', function handleGameOverFadeOutEnd() {
+                        gameOverElement.style.visibility = 'hidden';
+                        gameOverElement.style.opacity = '0';
+                        gameOverElement.style.animation = ''; // Очищаем свойство animation
+                        gameOverElement.removeEventListener('animationend', handleGameOverFadeOutEnd);
 
-                                // Обновляем рекорд, если текущий счет выше
-                                if (caughtEmojisCount > highScore) {
-                                    highScore = caughtEmojisCount;
-                                    setCookie('highScore', highScore, 365); // Сохраняем рекорд на 365 дней
-                                    updateHighScoreDisplay();
-                                    if (typeof ym === 'function') {
-                                        trackNewHighScore(highScore);
-                                    }
-                                }
+                        // Обновляем рекорд, если текущий счет выше
+                        if (caughtEmojisCount > highScore) {
+                            highScore = caughtEmojisCount;
+                            setCookie('highScore', highScore, 365); // Сохраняем рекорд на 365 дней
+                            updateHighScoreDisplay();
+                            if (typeof ym === 'function') {
+                                trackNewHighScore(highScore);
+                            }
+                        }
 
-                                // Обновляем рекорд, если текущий счет выше
-                                if (caughtEmojisCount > highScore) {
-                                    highScore = caughtEmojisCount;
-                                    setCookie('highScore', highScore, 365); // Сохраняем рекорд на 365 дней
-                                    updateHighScoreDisplay();
-                                }
-
-                                resetGame();
-                            }, { once: true });
-                        }, 2000); // Задержка перед исчезновением Game Over (увеличена)
+                        resetGame();
                     }, { once: true });
-                }
+                }, 4000); // Задержка перед исчезновением Game Over (увеличена)
             }, { once: true });
         }
 
-        // Перемещаем этот блок перед очисткой activeEmojiElements
         activeEmojiElements.forEach(emoji => {
             const rect = emoji.getBoundingClientRect();
             // Проверяем, находится ли эмодзи еще на экране или уже улетело вверх
@@ -191,7 +277,7 @@ export function initEmojiAnimation() {
         });
         activeEmojiElements = []; // Clear the array
         activeEmojis = 0; // Reset the counter
-    }
+    } // This closes the endGame function
 
     function resetGame() {
         lives = 3;
@@ -222,6 +308,8 @@ export function initEmojiAnimation() {
             heroTitle.style.animation = 'none'; // Сбрасываем анимацию
             void heroTitle.offsetWidth; // Принудительная перерисовка
             heroTitle.style.animation = 'heroTitle 1s ease-in-out, gradientShift 4s ease-in-out infinite'; // Ускоряем heroTitle в 2 раза
+            heroAppearSound.play(); // Воспроизводим звук появления title hero
+            ambientMusic.play(); // Запускаем фоновую музыку после сброса игры
         }
 
         const gameOverElement = document.getElementById('game-over');
@@ -269,6 +357,7 @@ export function initEmojiAnimation() {
             if (rect.bottom <= heroRect.top) {
                 el.dataset.escaped = '1';
                 lives -= 1; // Сначала уменьшаем жизни
+                lifeLostSounds[Math.floor(Math.random() * lifeLostSounds.length)].play(); // Воспроизводим случайный звук потери жизни
                 updateLives(); // Обновляем отображение жизней
                 // Находим соответствующий элемент сердечка для анимации падения
                 const lostHeartIndex = lives; // Индекс только что потерянного сердечка
@@ -337,6 +426,8 @@ export function initEmojiAnimation() {
     function startGame(clickedTop) {
         if (gameStarted) return;
         gameStarted = true;
+        ambientMusic.stop(); // Останавливаем фоновую музыку при начале игры
+        gameStatusMusic.play(); // Запускаем музыку статуса игры
 
         livesElement.style.opacity = '1';
         livesElement.style.visibility = 'visible';
@@ -401,6 +492,7 @@ export function initEmojiAnimation() {
             const clickedEmoji = event.target;
             const rect = clickedEmoji.getBoundingClientRect();
             caughtEmojisCount++;
+            emojiClickSound.play(); // Воспроизводим звук клика по эмодзи
             if (typeof ym === 'function') {
                 
                 
@@ -462,6 +554,7 @@ export function initEmojiAnimation() {
             if (rect.bottom < backgroundRect.top) {
                 if (gameStarted) { // Отнимаем жизнь только если игра началась
                     lives -= 1; // Отнимаем жизнь
+                    lifeLostSounds[Math.floor(Math.random() * lifeLostSounds.length)].play(); // Воспроизводим случайный звук потери жизни
                     updateLives(); // Обновляем отображение жизней
                     // Находим соответствующий элемент сердечка для анимации падения
                     const lostHeartIndex = lives; // Индекс только что потерянного сердечка
