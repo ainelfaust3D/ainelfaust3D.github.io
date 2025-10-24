@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Ainel Faust 3D</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/general.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/hero.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/lightbox.css">
+    <link rel="stylesheet" href="css/media_queries.css">
+    <link rel="stylesheet" href="css/game_over.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <!-- Yandex.Metrika counter --> 
     <script type="text/javascript"> 
@@ -43,6 +51,10 @@
                 <a href="#portfolio" class="btn">Посмотреть работы</a>
             </div>
             <div class="background-animation"></div> <!-- Placeholder for background animations -->
+            <div id="emoji-count" class="emoji-count">Поймано эмодзи: 0</div>
+            <div id="lives" class="lives">❤️❤️❤️</div>
+                <div id="high-score" class="high-score">🏆 Рекорд: 0</div>
+            <div id="game-over" class="game-over">Game Over</div>
         </section>
 
         <section id="about" class="card">
@@ -84,6 +96,12 @@
         <p>&copy; 2025 Все права защищены.</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script type="module" src="./yandexMetrika.js"></script>
+    <script type="module" src="./lightbox.js"></script>
+    <script type="module" src="./logoAnimation.js"></script>
+    <script type="module" src="./emojiAnimation.js"></script>
+    <script type="module" src="./navigation.js"></script>
+    <script type="module" src="./portfolio.js"></script>
+    <script type="module" src="./script.js"></script>
 </body>
 </html>

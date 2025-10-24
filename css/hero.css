@@ -1,0 +1,230 @@
+.emoji-count {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #FFF; /* Белый текст */
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 1.5em; /* Увеличиваем размер шрифта */
+    font-weight: 700; /* Жирный шрифт */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Тень для лучшей читаемости */
+    z-index: 10;
+    opacity: 0; /* Изначально скрываем */
+    visibility: hidden; /* Изначально скрываем */
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out, transform 0.2s ease-out; /* Плавная анимация */
+    pointer-events: none; /* Позволяет прокликивать сквозь элемент */
+}
+
+.emoji-count.animate {
+    transform: scale(1.1); /* Увеличение при анимации */
+}
+
+.high-score {
+    position: absolute;
+    top: 20px; /* Выравниваем по верхнему краю с жизнями */
+    left: 150px; /* Размещаем справа от жизней */
+    background-color: rgba(255, 255, 255, 0.2); /* Темно-розовый полупрозрачный */
+    color: #FFF;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    opacity: 0; /* Изначально скрываем */
+    visibility: hidden; /* Изначально скрываем */
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out, transform 0.2s ease-out; /* Плавная анимация */
+    pointer-events: none; /* Позволяет прокликивать сквозь элемент */
+}
+
+.high-score.animate {
+    transform: scale(1.1); /* Увеличение при анимации */
+}
+
+.lives {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #FFF;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 1.2em;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    opacity: 0; /* Изначально скрываем */
+    visibility: hidden; /* Изначально скрываем */
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out; /* Плавная анимация */
+    pointer-events: none; /* Позволяет прокликивать сквозь элемент */
+}
+    #hero {
+        position: relative;
+        height: 80vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: #fff;
+        /* overflow: hidden; */
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        margin-bottom: 40px; /* Добавляем отступ снизу */
+        border-radius: 15px; /* Закругляем все углы фрейма */
+        user-select: none; /* Предотвращаем выделение текста */
+        -webkit-user-select: none; /* Для Webkit-браузеров */
+    }
+
+    /* Media Queries for Responsiveness */
+    @media (max-width: 768px) {
+        header nav {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header nav ul {
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 1.5em;
+        }
+
+        #hero h1 {
+            font-size: 2.5em;
+        }
+
+        #hero p {
+            font-size: 1.2em;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            font-size: 1em;
+        }
+
+        .tabs {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tab-button {
+            width: 90%;
+            max-width: 300px;
+        }
+
+        .gallery {
+            grid-template-columns: 1fr;
+        }
+
+        .portfolio-item img {
+            height: 180px;
+        }
+
+    }
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+}
+
+#hero h1 {
+    font-size: 3.5em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    animation: heroTitle 2s ease-in-out;
+    background: linear-gradient(45deg, #fff, #ff69b4, #87ceeb, #fff);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: heroTitle 2s ease-in-out, gradientShift 4s ease-in-out infinite;
+    pointer-events: none; /* Добавляем это свойство */
+}
+
+@keyframes heroTitle {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+#hero p {
+    font-size: 1.5em;
+    margin-bottom: 30px;
+}
+
+#hero .btn {
+    pointer-events: auto;
+}
+
+.btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent-color) 0%, #6ac5ed 100%);
+    color: #fff;
+    padding: 15px 35px;
+    border-radius: 35px;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(135, 206, 235, 0.3);
+    border: 2px solid transparent;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:hover {
+    background: linear-gradient(135deg, #6ac5ed 0%, #ff69b4 100%);
+    transform: translateY(-3px) scale(1.02);
+    text-decoration: none;
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.spent-heart {
+    opacity: 0.7;
+}
+
+.falling-heart {
+    position: fixed;
+    font-size: var(--emoji-size, 30px);
+    animation: fallHeart var(--fall-animation-duration, 2s) forwards;
+    z-index: 1002; /* Убедитесь, что падающее сердце находится поверх всего */
+}
+
+@keyframes fallHeart {
+    to {
+        transform: translateY(100vh) rotate(var(--random-rotation, 0deg)) translateX(var(--random-x, 0px));
+        opacity: 0;
+    }
+}

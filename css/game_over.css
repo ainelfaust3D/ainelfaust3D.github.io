@@ -1,0 +1,26 @@
+.game-over {
+    position: absolute;
+    top: 40%; /* Перемещаем выше */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8em;
+    font-weight: bold;
+    color: #FF0000; /* Ярко-красный цвет */
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    z-index: 1000;
+    white-space: nowrap;
+}
+
+.game-over.active {
+    visibility: visible;
+    opacity: 1;
+    animation: gradientShift 4s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}

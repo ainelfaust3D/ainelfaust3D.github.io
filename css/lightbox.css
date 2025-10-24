@@ -1,0 +1,97 @@
+/* Lightbox Styles */
+#lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#lightbox.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    /* Стили для масштабирования */
+    transform-origin: center center;
+    transition: transform 0.1s ease-out;
+    cursor: zoom-in;
+}
+
+#lightbox img.zoomable {
+    cursor: grab;
+}
+
+#lightbox img.zoomable:active {
+    cursor: grabbing;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: #fff;
+    font-size: 40px;
+    cursor: pointer;
+    z-index: 2001;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.lightbox-close:hover {
+    color: var(--primary-color);
+}
+
+.lightbox.active {
+    display: flex;
+}
+
+.no-scroll {
+    overflow: hidden;
+}
+
+/* Стили для кнопок навигации */
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 60px;
+    cursor: pointer;
+    z-index: 2001;
+    background: none;
+    border: none;
+    padding: 0 20px;
+    transition: color 0.3s ease;
+}
+
+.lightbox-nav:hover {
+    color: var(--primary-color);
+}
+
+.lightbox-nav.prev {
+    left: 20px;
+}
+
+.lightbox-nav.next {
+    right: 20px;
+}
+
+.lightbox-nav:hover {
+    color: var(--primary-color);
+}

@@ -1,0 +1,13 @@
+footer {
+    background-color: var(--footer-background);
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    border-radius: 15px; /* Закругленные все углы */
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.9em;
+}

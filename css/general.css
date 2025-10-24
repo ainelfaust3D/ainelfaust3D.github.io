@@ -1,0 +1,41 @@
+/* General Styles */
+:root {
+    --primary-color: #ff69b4; /* Hot Pink */
+    --secondary-color: #ffb6c1; /* Light Pink */
+    --accent-color: #87ceeb; /* Sky Blue for contrast */
+    --text-color: #333;
+    --background-color: #fce4ec; /* Lighter Pink Background */
+    --card-background: #fff;
+    --footer-background: #ff69b4;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px; /* Adjust this value based on your header's height */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden; /* Prevent horizontal scroll from animations */
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="none" stroke="%23ff69b4" stroke-width="2"/><circle cx="10" cy="10" r="2" fill="%23ff69b4"/></svg>') 10 10, auto;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
