@@ -1,43 +1,7 @@
 import { trackLogoClick } from './yandexMetrika.js';
+import { creakSound, fallSound, stompingSounds, logoPlaceSound } from './audioManager.js';
 
-// Инициализация звуков
-const creakSound = new Howl({
-    src: ['./audio/creak.mp3'],
-    volume: 0.5
-});
 
-const fallSound = new Howl({
-    src: ['./audio/fall.mp3'],
-    volume: 0
-});
-
-const heroAppearSound = new Howl({
-    src: ['./audio/hero_appear.mp3'],
-    volume: 0.5
-});
-
-const logoPlaceSound = new Howl({
-    src: ['./audio/logo_placed.mp3'],
-    volume: 0.5
-});
-
-const stompingSounds = [
-    new Howl({
-        src: ['./audio/stomping.mp3'],
-        volume: 0,
-        loop: true
-    }),
-    new Howl({
-        src: ['./audio/stomping2.mp3'],
-        volume: 0,
-        loop: true
-    }),
-    new Howl({
-        src: ['./audio/stomping3.mp3'],
-        volume: 0,
-        loop: true
-    })
-];
 
 export function initLogoAnimation() {
     const logo = document.querySelector('.logo');

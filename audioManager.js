@@ -72,3 +72,18 @@ export const scoreMilestoneSounds = [
         volume: 0.5
     })
 ];
+
+export const creakSound = new Howl({
+    src: ['./audio/creak.mp3'],
+    volume: 0.5
+});
+
+export const fallSound = new Howl({
+    src: ['./audio/fall.mp3'],
+    volume: 0.7
+});
+
+export const logoPlaceSound = new Howl({
+    src: ['./audio/logo_placed.mp3'],
+    volume: 0.5
+});

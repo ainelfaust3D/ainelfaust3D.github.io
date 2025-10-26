@@ -54,13 +54,31 @@ export function initEmojiAnimation() {
 
     let initialSpawnInterval = 1000; // Начальный интервал спавна (1 секунда)
     let currentSpawnInterval = initialSpawnInterval;
-    const minSpawnInterval = 300; // Минимальный интервал спавна (0.3 секунды)
+    // Determine minSpawnInterval based on device type
+    function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    const minSpawnInterval = isMobileDevice() ? 200 : 500; // Минимальный интервал спавна (0.2 секунды для моб., 0.5 для десктопа)
     const spawnIntervalDecreaseRate = 50; // На сколько уменьшать интервал за каждый шаг
     const difficultyThreshold = 10; // Каждые 10 пойманных эмодзи увеличиваем сложность
     let currentDifficultyThreshold = difficultyThreshold;
 
     let spawnInterval = null;
     let lifeCheckInterval = null;
+
+    // Handle page visibility change
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && !gameOver && spawnInterval === null) {
+        spawnInterval = setInterval(createFloatingEmoji, currentSpawnInterval);
+      } else if (document.visibilityState === 'hidden' && spawnInterval !== null) {
+        clearInterval(spawnInterval);
+        spawnInterval = null;
+      }
+    });
+
+    // Start initial emoji spawning
+    spawnInterval = setInterval(createFloatingEmoji, currentSpawnInterval);
 
 
 
@@ -191,7 +209,9 @@ export function initEmojiAnimation() {
             heroTitle.style.animation = 'none'; // Сбрасываем анимацию
             void heroTitle.offsetWidth; // Принудительная перерисовка
             heroTitle.style.animation = 'heroTitle 1s ease-in-out, gradientShift 4s ease-in-out infinite'; // Ускоряем heroTitle в 2 раза
-            heroAppearSound.play(); // Воспроизводим звук появления title hero
+            if (!heroAppearSound.playing()) {
+                heroAppearSound.play(); // Воспроизводим звук появления title hero
+            }
             ambientMusic.play(); // Запускаем фоновую музыку после сброса игры
         }
 
@@ -350,12 +370,12 @@ export function initEmojiAnimation() {
         // Ограничиваем спавн внутри горизонтальных границ backgroundAnimation
         const containerRect = backgroundAnimation.getBoundingClientRect();
 
-        console.log('containerRect:', containerRect);
-        console.log('Emoji size:', size);
+        // console.log('containerRect:', containerRect);
+        // console.log('Emoji size:', size);
 
         // Calculate startX relative to the container's left edge (0 to container.width - size)
         const startX = Math.random() * (containerRect.width - size);
-        console.log('Calculated startX (relative to container):', startX);
+        // console.log('Calculated startX (relative to container):', startX);
         // Спавним ниже нижней границы backgroundAnimation, чтобы летали через hero
         const startY = backgroundAnimation.offsetHeight + 50; // Start below the visible area
         emoji.style.left = `${Math.random() * (backgroundAnimation.offsetWidth - 30)}px`;
