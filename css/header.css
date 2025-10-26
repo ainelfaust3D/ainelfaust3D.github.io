@@ -29,6 +29,10 @@ header nav {
     -webkit-user-select: none; /* Для Webkit-браузеров */
 }
 
+.mute-button.muted {
+    color: #ccc; /* Изменяем цвет, когда звук выключен */
+}
+
 .logo.straight {
     transform: rotate(0deg); /* Выравнивание при наличии класса */
 }

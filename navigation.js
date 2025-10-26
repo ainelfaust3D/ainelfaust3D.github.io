@@ -1,5 +1,5 @@
 export function initNavigation() {
-    const navButtons = document.querySelectorAll('.nav-button');
+    const navButtons = document.querySelectorAll('.nav-button:not(#mute-button)');
 
     navButtons.forEach(button => {
         button.addEventListener('click', function() {

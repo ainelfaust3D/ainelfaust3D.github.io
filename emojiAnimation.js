@@ -1,6 +1,5 @@
 import { trackNewHighScore, trackEmojiClick } from './yandexMetrika.js';
-import { heroAppearSound, gameOverSound, emojiClickSound, gameStatusMusic, ambientMusic, stompingSounds, lifeLostSounds, scoreMilestoneSounds } from './audioManager.js';
-import { setCookie, getCookie, deleteCookie } from './cookieUtils.js';
+import { heroAppearSound, gameOverSound, gameStatusMusic, ambientMusic, stompingSounds, lifeLostSounds, scoreMilestoneSounds, emojiClickSound } from './audioManager.js';
 import { updateHighScoreDisplay, updateEmojiCount, updateLives } from './uiManager.js';
 
 export function initEmojiAnimation() {
@@ -19,7 +18,7 @@ export function initEmojiAnimation() {
     let highScore = 0; // Переменная для хранения рекорда
 
     // Загружаем рекорд из куки при инициализации
-    highScore = parseInt(getCookie('highScore') || '0');
+    highScore = parseInt(localStorage.getItem('highScore') || '0');
     updateHighScoreDisplay(highScoreElement, highScore);
 
 
@@ -28,6 +27,27 @@ export function initEmojiAnimation() {
     let lives = 3;
     let gameStarted = false;
     let gameOver = false;
+
+    const muteButton = document.getElementById('mute-button');
+    if (muteButton) {
+        // Устанавливаем начальное состояние кнопки
+        Howler.mute(localStorage.getItem('isMuted') === 'true');
+        muteButton.textContent = Howler._muted ? '🔇' : '🔊';
+        if (Howler._muted) {
+            muteButton.classList.add('muted');
+        }
+
+        muteButton.addEventListener('click', () => {
+            Howler.mute(!Howler._muted);
+            localStorage.setItem('isMuted', Howler._muted); // Save state to localStorage
+            muteButton.textContent = Howler._muted ? '🔇' : '🔊';
+            if (Howler._muted) {
+                muteButton.classList.add('muted');
+            } else {
+                muteButton.classList.remove('muted');
+            }
+        });
+    }
 
     const MAX_EMOJIS = 60; // Максимальное количество эмодзи на экране
     let activeEmojis = 0;
@@ -93,14 +113,16 @@ export function initEmojiAnimation() {
             gameOverElement.style.opacity = '0';
             gameOverElement.style.animation = 'none'; // Сброс анимации
             void gameOverElement.offsetWidth; // Принудительная перерисовка
-            gameOverElement.style.animation = 'gameOverFadeIn 4s forwards'; // Ускоряем в 2 раза
+            gameOverElement.style.animation = 'gameOverFadeIn 1s forwards'; // Ускоряем в 2 раза
             gameOverElement.addEventListener('animationend', function handleGameOverFadeInEnd() {
                 gameOverElement.removeEventListener('animationend', handleGameOverFadeInEnd);
                 // После появления Game Over, ждем 1 секунду (было 2) и запускаем исчезновение
                 setTimeout(() => {
                     gameOverElement.style.animation = 'none'; // Сброс анимации
                     void gameOverElement.offsetWidth; // Принудительная перерисовка
-                    gameOverElement.style.animation = 'gameOverFadeOut 0.5s forwards'; // Ускоряем в 2 раза
+                    gameOverSound.fade(0.7, 0, 1000); // Затухание звука Game Over за 1 секунду
+                    setTimeout(() => gameOverSound.stop(), 1000); // Останавливаем звук после затухания
+                    gameOverElement.style.animation = 'gameOverFadeOut 1s forwards'; // Ускоряем в 2 раза
                     gameOverElement.addEventListener('animationend', function handleGameOverFadeOutEnd() {
                         gameOverElement.style.visibility = 'hidden';
                         gameOverElement.style.opacity = '0';
@@ -110,7 +132,7 @@ export function initEmojiAnimation() {
                         // Обновляем рекорд, если текущий счет выше
                         if (caughtEmojisCount > highScore) {
                             highScore = caughtEmojisCount;
-                            setCookie('highScore', highScore, 365); // Сохраняем рекорд на 365 дней
+                            localStorage.setItem('highScore', highScore); // Сохраняем рекорд на 365 дней
                             updateHighScoreDisplay(highScoreElement, highScore);
                             if (typeof ym === 'function') {
                                 trackNewHighScore(highScore);
@@ -119,7 +141,7 @@ export function initEmojiAnimation() {
 
                         resetGame();
                     }, { once: true });
-                }, 4000); // Задержка перед исчезновением Game Over (увеличена)
+                }, 2000); // Задержка перед исчезновением Game Over (увеличена)
             }, { once: true });
         }
 
@@ -179,6 +201,8 @@ export function initEmojiAnimation() {
             gameOverElement.style.opacity = '0';
             gameOverElement.style.animation = ''; // Очищаем свойство animation
         }
+
+        gameOverSound.volume(0.7); // Сброс громкости звука Game Over
 
         // Clear any remaining emojis from the screen
         const currentEmojis = Array.from(backgroundAnimation.querySelectorAll('.floating-emoji'));
@@ -350,35 +374,31 @@ export function initEmojiAnimation() {
         // Добавляем эмодзи в массив для отслеживания прозрачности
         activeEmojiElements.push(emoji);
         emoji.addEventListener('click', (event) => {
-            const clickedEmoji = event.target;
-            const rect = clickedEmoji.getBoundingClientRect();
-            caughtEmojisCount++;
+    const clickedEmoji = event.target;
+    if (clickedEmoji.dataset.clicked) return;
+    clickedEmoji.dataset.clicked = 'true';
+    const rect = clickedEmoji.getBoundingClientRect();
+    caughtEmojisCount++;
             emojiClickSound.play(); // Воспроизводим звук клика по эмодзи
-            if (typeof ym === 'function') {
-                
-                
-                
-                trackEmojiClick();
-            }
-            if (caughtEmojisCount > highScore) {
-                highScore = caughtEmojisCount;
-                setCookie('highScore', highScore, 365); // Сохраняем рекорд на 365 дней
-                updateHighScoreDisplay(highScoreElement, highScore);
-            }
+    if (typeof ym === 'function') {
+        trackEmojiClick();
+    }
+    if (caughtEmojisCount > highScore) {
+        highScore = caughtEmojisCount;
+        localStorage.setItem('highScore', highScore); // Сохраняем рекорд на 365 дней
+        updateHighScoreDisplay(highScoreElement, highScore);
+    }
 
 
-            updateEmojiCount(emojiCountElement, caughtEmojisCount, currentDifficultyThreshold, () => {
-                updateDifficulty();
-                currentDifficultyThreshold += difficultyThreshold;
-            });
-            if (typeof ym === 'function') {
-      
-            }
-            if (!gameStarted) {
-                startGame(rect.top);
-            }
-            forceEmojiFall(clickedEmoji);
-        });
+    updateEmojiCount(emojiCountElement, caughtEmojisCount, currentDifficultyThreshold, () => {
+        updateDifficulty();
+        currentDifficultyThreshold += difficultyThreshold;
+    });
+    if (!gameStarted) {
+        startGame(rect.top);
+    }
+    forceEmojiFall(clickedEmoji);
+});
     }
 
     let activeEmojiElements = []; // Массив для хранения активных эмодзи

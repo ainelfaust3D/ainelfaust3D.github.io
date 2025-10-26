@@ -10,7 +10,7 @@ export const gameOverSound = new Howl({
 
 export const emojiClickSound = new Howl({
     src: ['./audio/emoji_click.mp3'],
-    volume: 0.5
+    volume: 0.3
 });
 
 export const gameStatusMusic = new Howl({
