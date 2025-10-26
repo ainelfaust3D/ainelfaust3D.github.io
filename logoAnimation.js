@@ -19,7 +19,9 @@ export function initLogoAnimation() {
             trackLogoClick(5);
             setTimeout(() => {
             fallSound.play();
-            fallSound.fade(0, 0.7, 500);
+            setTimeout(() => {
+                fallSound.fade(0.7, 0, 1000); // Затухание с текущей громкости до 0 за 1.5 секунды
+            }, 1000); // Начать затухание через 2 секунды после play()
         }, 1000); // Задержка 1 секунда
         }
         const wasStraightBeforeClick = logo.classList.contains('straight');
@@ -157,8 +159,10 @@ export function initLogoAnimation() {
                     setTimeout(() => sound.stop(), 500);
                     setTimeout(() => sound.stop(), 500);
                 });
-                fallSound.fade(0.7, 0, 500);
-                setTimeout(() => fallSound.stop(), 3000);
+                setTimeout(() => {
+                    fallSound.fade(0.7, 0, 1500); // Затухание с текущей громкости до 0 за 1.5 секунды
+                }, 2000); // Начать затухание через 2 секунды после завершения анимации
+                setTimeout(() => fallSound.stop(), 4000); // Остановить звук после завершения затухания
                 animationContainer.remove();
             }
         }, { once: false });
