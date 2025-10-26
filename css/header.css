@@ -42,7 +42,6 @@ header nav ul {
     margin: 0;
     padding: 0;
     display: flex;
-    flex-wrap: wrap;
     gap: 15px; /* Добавляем отступ между элементами */
 }
 
@@ -61,6 +60,9 @@ header nav ul li .nav-button {
     position: relative;
     overflow: hidden;
     z-index: 1;
+    white-space: nowrap;
+    min-width: fit-content;
+    text-overflow: ellipsis;
 }
 
 header nav ul li .nav-button::before {

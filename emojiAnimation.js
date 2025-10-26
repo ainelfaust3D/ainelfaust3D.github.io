@@ -11,6 +11,16 @@ export function initEmojiAnimation() {
     const emojiCountElement = document.getElementById('emoji-count');
     const gameOverElement = document.getElementById('game-over');
     const highScoreElement = document.getElementById('high-score'); // Новый элемент для рекорда
+    const portfolioButton = document.querySelector('a.btn[href="#portfolio"]'); // Кнопка "Посмотреть работы"
+
+    const emojis = [
+        '😀', '😂', '😍', '🤩', '🥳', '😎', '😇', '🥰', '😋', '😜',
+        '👍', '👏', '🙌', '💖', '✨', '🔥', '🌈', '☀️', '🌸', '🌼',
+        '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯',
+        '🍎', '🍓', '🍇', '🍉', '🍍', '🍑', '🍒', '🥝', '🍔', '🍕',
+        '🍦', '🍩', '🍪', '🎂', '🍬', '🍭', '🍫', '☕', '🍵', '🥂',
+        '🎈', '🎁', '🎉', '🎊', '🎀', '👑', '💎', '💫', '🌟', '✨'
+    ];
 
     // Функции для работы с куки
     
@@ -27,6 +37,7 @@ export function initEmojiAnimation() {
     let lives = 3;
     let gameStarted = false;
     let gameOver = false;
+    let isInvulnerable = false;
 
     const muteButton = document.getElementById('mute-button');
     if (muteButton) {
@@ -222,6 +233,17 @@ export function initEmojiAnimation() {
             gameOverElement.style.animation = ''; // Очищаем свойство animation
         }
 
+        if (portfolioButton) {
+            portfolioButton.classList.add('animated-button');
+            portfolioButton.style.opacity = '1';
+            portfolioButton.style.visibility = 'visible';
+        }
+
+        if (portfolioButton) {
+            portfolioButton.style.animation = ''; // Очищаем предыдущую анимацию
+            portfolioButton.style.animation = 'portfolioButtonAppear 0.5s ease-out forwards';
+        }
+
         gameOverSound.volume(0.7); // Сброс громкости звука Game Over
 
         // Clear any remaining emojis from the screen
@@ -241,18 +263,10 @@ export function initEmojiAnimation() {
         spawnInterval = setInterval(createFloatingEmoji, currentSpawnInterval);
     }
 
-    const emojis = [
-        '😀', '😂', '😍', '🤩', '🥳', '😎', '😇', '🥰', '😋', '😜',
-        '👍', '👏', '🙌', '💖', '✨', '🔥', '🌈', '☀️', '🌸', '🌼',
-        '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯',
-        '🍎', '🍓', '🍇', '🍉', '🍍', '🍑', '🍒', '🥝', '🍔', '🍕',
-        '🍦', '🍩', '🍪', '🎂', '🍬', '🍭', '🍫', '☕', '🍵', '🥂',
-        '🎈', '🎁', '🎉', '🎊', '🎀', '👑', '💎', '💫', '🌟', '✨'
-    ];
-
     // Добавляем более точную проверку улёта вверх через requestAnimationFrame
     function lifeCheckLoop() {
         if (gameOver || !gameStarted) return;
+        if (isInvulnerable) return; // Не вычитаем жизни, если активна неуязвимость
         const heroRect = hero.getBoundingClientRect();
         const list = Array.from(backgroundAnimation.querySelectorAll('.floating-emoji'));
         list.forEach(el => {
@@ -331,6 +345,10 @@ export function initEmojiAnimation() {
     function startGame(clickedTop) {
         if (gameStarted) return;
         gameStarted = true;
+        isInvulnerable = true; // Устанавливаем неуязвимость в начале игры
+        setTimeout(() => {
+            isInvulnerable = false; // Снимаем неуязвимость через 1 секунды
+        }, 1000);
         ambientMusic.stop(); // Останавливаем фоновую музыку при начале игры
         gameStatusMusic.play(); // Запускаем музыку статуса игры
 
@@ -340,6 +358,10 @@ export function initEmojiAnimation() {
         emojiCountElement.style.visibility = 'visible';
         highScoreElement.style.opacity = '1';
         highScoreElement.style.visibility = 'visible';
+
+        if (portfolioButton) {
+            portfolioButton.style.animation = 'heroTitleReverse 0.5s ease-in-out forwards';
+        }
 
         // Clear existing intervals before starting new ones
         if (spawnInterval) clearInterval(spawnInterval);
@@ -459,7 +481,7 @@ export function initEmojiAnimation() {
 
             // Удаляем эмодзи, если оно полностью ушло за верхнюю границу backgroundAnimation
             if (rect.bottom < backgroundRect.top) {
-                if (gameStarted) { // Отнимаем жизнь только если игра началась
+                if (gameStarted && !isInvulnerable) { // Отнимаем жизнь только если игра началась и нет неуязвимости
                     lives -= 1; // Отнимаем жизнь
                     lifeLostSounds[Math.floor(Math.random() * lifeLostSounds.length)].play(); // Воспроизводим случайный звук потери жизни
                     updateLives(livesElement, lives); // Обновляем отображение жизней

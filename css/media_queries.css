@@ -3,15 +3,31 @@
     header nav {
         flex-direction: column;
         align-items: center;
+        width: 100%;
+        padding: 0 5px; /* Убираем горизонтальный padding для nav */
+        justify-content: center; /* Распределяем пространство между логотипом и навигацией */
     }
 
     header nav ul {
-        margin-top: 15px;
-        justify-content: center;
+        /* margin-top: 15px; */
+        justify-content: space-around;
+        flex-wrap: nowrap;
+        gap: 0px; /* Убираем отступ между элементами для мобильных */
+        flex-grow: 1; /* Позволяем ul занимать все доступное пространство */
+        width: 100%; /* Убедимся, что ul занимает всю ширину */
+    }
+
+    header nav ul li {
+        min-width: 0; /* Позволяем элементам списка сжиматься */
+        flex-shrink: 1; /* Позволяем элементам списка сжиматься */
+        flex-grow: 1; /* Позволяем элементам списка равномерно распределять пространство */
+        flex-basis: 0; /* Позволяем элементам списка максимально сжиматься */
+        text-align: center; /* Центрируем текст кнопки */
     }
 
     .logo {
         font-size: 1.5em;
+        flex-shrink: 1; /* Позволяем логотипу сжиматься */
     }
 
     #hero h1 {
@@ -35,6 +51,14 @@
     .tab-button {
         width: 90%;
         max-width: 300px;
+    }
+
+    header nav ul li .nav-button {
+        white-space: nowrap;
+        padding: 6px 5px;
+        font-size: 0.8em; /* Дополнительно уменьшаем размер шрифта */
+        flex-shrink: 1; /* Позволяем кнопкам сжиматься */
+        min-width: 0; /* Позволяем кнопке сжиматься до минимального размера */
     }
 
     .gallery {
