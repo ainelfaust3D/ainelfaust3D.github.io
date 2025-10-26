@@ -237,6 +237,7 @@ export function initEmojiAnimation() {
             portfolioButton.classList.add('animated-button');
             portfolioButton.style.opacity = '1';
             portfolioButton.style.visibility = 'visible';
+            portfolioButton.style.pointerEvents = 'auto'; // Включаем клики
         }
 
         if (portfolioButton) {
@@ -361,6 +362,7 @@ export function initEmojiAnimation() {
 
         if (portfolioButton) {
             portfolioButton.style.animation = 'heroTitleReverse 0.5s ease-in-out forwards';
+            portfolioButton.style.pointerEvents = 'none'; // Отключаем клики
         }
 
         // Clear existing intervals before starting new ones
